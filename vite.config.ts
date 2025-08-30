@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   define: {
     global: 'window',
-    Buffer: 'Buffer',
+    Buffer: 'buffer/index.js',
     process: 'globalThis.process',
     'process.env': {},
   },

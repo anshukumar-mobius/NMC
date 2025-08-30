@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDownIcon, UserIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, UserIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../../contexts/AuthContext';
+import { LogoutButton } from '../Auth/LogoutButton';
 import { mockApi } from '../../utils/mockApi';
 
 interface User {
@@ -12,25 +14,37 @@ interface User {
 }
 
 export function Header() {
+  const { user: currentAuthUser, hasPermission } = useAuth();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
+    // Set current user from auth context
+    if (currentAuthUser) {
+      setCurrentUser(currentAuthUser);
+    }
+    
     const loadData = async () => {
       try {
         const usersData = await mockApi.getUsers();
         setUsers(usersData);
-        setCurrentUser(usersData[0]); // Default to first user
+        // Only set default user if no authenticated user
+        if (!currentAuthUser) {
+          setCurrentUser(usersData[0]);
+        }
       } catch (error) {
         console.error('Error loading users:', error);
       }
     };
     loadData();
-  }, []);
+  }, [currentAuthUser]);
 
   const handleUserSwitch = (user: User) => {
-    setCurrentUser(user);
+    // Only allow user switching if user has admin permissions
+    if (hasPermission('user_management')) {
+      setCurrentUser(user);
+    }
     setShowUserMenu(false);
   };
 
@@ -66,6 +80,12 @@ export function Header() {
                       <div className="font-medium text-slate-900">{currentUser.name}</div>
                       <div className="text-xs text-slate-500">{currentUser.persona}</div>
                     </div>
+                    {currentAuthUser && (
+                      <div className="flex items-center gap-1">
+                        <ShieldCheckIcon className="h-3 w-3 text-green-500" />
+                        <span className="text-xs text-green-600">Authenticated</span>
+                      </div>
+                    )}
                     <ChevronDownIcon className="h-4 w-4 text-slate-400" />
                   </>
                 ) : (
@@ -79,10 +99,46 @@ export function Header() {
               {showUserMenu && (
                 <div className="absolute right-0 z-10 mt-2 w-80 origin-top-right rounded-xl bg-white py-2 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="px-4 py-3 border-b border-slate-100">
-                    <p className="text-sm font-medium text-slate-900">Switch Persona</p>
-                    <p className="text-xs text-slate-500">Select a role to continue</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      {hasPermission('user_management') ? 'Switch Persona' : 'User Profile'}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {hasPermission('user_management') ? 'Select a role to continue' : 'Current session details'}
+                    </p>
                   </div>
-                  {users.map((user) => (
+                  
+                  {/* Current User Info */}
+                  {currentAuthUser && (
+                    <div className="px-4 py-3 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <img
+                          className="h-10 w-10 rounded-full object-cover"
+                          src={currentAuthUser.avatar}
+                          alt={currentAuthUser.name}
+                        />
+                        <div>
+                          <div className="font-medium text-slate-900">{currentAuthUser.name}</div>
+                          <div className="text-xs text-slate-500">{currentAuthUser.email}</div>
+                          <div className="text-xs text-green-600">✓ Authenticated</div>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {currentAuthUser.permissions.slice(0, 3).map((permission, idx) => (
+                          <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                            {permission.replace('_', ' ')}
+                          </span>
+                        ))}
+                        {currentAuthUser.permissions.length > 3 && (
+                          <span className="text-xs text-slate-500">
+                            +{currentAuthUser.permissions.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* User Switching (Admin Only) */}
+                  {hasPermission('user_management') && users.map((user) => (
                     <button
                       key={user.id}
                       className={`w-full flex items-center gap-x-3 px-4 py-3 text-sm text-left hover:bg-slate-50 transition-colors duration-200 ${
@@ -105,6 +161,11 @@ export function Header() {
                       )}
                     </button>
                   ))}
+                  
+                  {/* Logout Button */}
+                  <div className="px-4 py-2 border-t border-slate-100">
+                    <LogoutButton />
+                  </div>
                 </div>
               )}
             </div>

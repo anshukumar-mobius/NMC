@@ -9,20 +9,51 @@ import claimsData from '../mock/claims.json';
 import sourcesData from '../mock/sources.json';
 import agentsData from '../mock/agents.json';
 import auditEventsData from '../mock/auditEvents.json';
+import { User } from '../types/auth';
 
 // Simulate API latency
 const delay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Add admin and guest users to the existing user data
+const extendedUsers = [
+  ...usersData.users,
+  {
+    id: 'admin001',
+    name: 'System Administrator',
+    email: 'admin@nmc.ae',
+    persona: 'System Administrator',
+    department: 'Information Technology',
+    role: 'admin',
+    avatar: 'https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+    permissions: []
+  },
+  {
+    id: 'guest001',
+    name: 'Guest User',
+    email: 'guest@nmc.ae',
+    persona: 'Guest User',
+    department: 'General',
+    role: 'guest',
+    avatar: 'https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+    permissions: []
+  }
+];
 
 export const mockApi = {
   // Users API
   async getUsers() {
     await delay(300);
-    return usersData.users;
+    return extendedUsers;
   },
 
   async getUserById(id: string) {
     await delay(200);
-    return usersData.users.find(user => user.id === id);
+    return extendedUsers.find(user => user.id === id);
+  },
+
+  async getUserByEmail(email: string) {
+    await delay(200);
+    return extendedUsers.find(user => user.email === email);
   },
 
   // Patients API

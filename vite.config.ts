@@ -14,10 +14,11 @@ export default defineConfig({
     alias: {
       buffer: 'buffer',
       util: 'util',
+      stream: 'stream-browserify',
     },
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
-    include: ['jsonwebtoken', 'jws', 'util'],
+    include: ['jsonwebtoken', 'jws', 'util', 'stream-browserify', 'readable-stream'],
   },
 });

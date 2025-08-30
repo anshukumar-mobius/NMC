@@ -1,0 +1,54 @@
+{
+  "users": [
+    {
+      "id": "u001",
+      "name": "Dr. Ahmed Al-Rashid",
+      "email": "ahmed.alrashid@nmc.ae",
+      "persona": "Attending Physician",
+      "department": "Internal Medicine",
+      "role": "attending_physician",
+      "avatar": "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      "permissions": ["view_patients", "prescribe", "cds_access", "icd_coding"]
+    },
+    {
+      "id": "u002",
+      "name": "Dr. Sarah Thompson",
+      "email": "sarah.thompson@nmc.ae",
+      "persona": "Resident Doctor",
+      "department": "Emergency Medicine",
+      "role": "resident",
+      "avatar": "https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      "permissions": ["view_patients", "cds_access", "icd_coding"]
+    },
+    {
+      "id": "u003",
+      "name": "Fatima Al-Zahra",
+      "email": "fatima.alzahra@nmc.ae",
+      "persona": "Nurse",
+      "department": "ICU",
+      "role": "nurse",
+      "avatar": "https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      "permissions": ["view_patients", "medication_admin"]
+    },
+    {
+      "id": "u004",
+      "name": "Dr. Hassan Mahmoud",
+      "email": "hassan.mahmoud@nmc.ae",
+      "persona": "Quality Manager",
+      "department": "Quality Assurance",
+      "role": "quality_manager",
+      "avatar": "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      "permissions": ["audit_access", "quality_metrics", "jci_access", "rules_management"]
+    },
+    {
+      "id": "u005",
+      "name": "Dr. Priya Sharma",
+      "email": "priya.sharma@nmc.ae",
+      "persona": "Radiologist",
+      "department": "Radiology",
+      "role": "radiologist",
+      "avatar": "https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      "permissions": ["view_patients", "imaging_reports", "appropriateness_check"]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "sources": [
+    {
+      "id": "HIS001",
+      "name": "Hospital Information System",
+      "type": "HIS",
+      "vendor": "Epic",
+      "version": "2023.1",
+      "status": "connected",
+      "lastSync": "2024-01-20T08:00:00Z",
+      "connectedModules": ["Patients", "Encounters", "Claims"],
+      "dataPoints": 15420,
+      "uptime": 99.7,
+      "description": "Primary hospital information system managing patient demographics, appointments, and billing"
+    },
+    {
+      "id": "EMR001",
+      "name": "Electronic Medical Records",
+      "type": "EMR",
+      "vendor": "Cerner",
+      "version": "PowerChart 2023",
+      "status": "connected",
+      "lastSync": "2024-01-20T08:15:00Z",
+      "connectedModules": ["CDS", "ICD Mapping", "Clinical Notes"],
+      "dataPoints": 8745,
+      "uptime": 98.9,
+      "description": "Clinical documentation and decision support system"
+    },
+    {
+      "id": "PACS001",
+      "name": "Picture Archiving System",
+      "type": "PACS",
+      "vendor": "GE Healthcare",
+      "version": "Centricity 6.1",
+      "status": "connected",
+      "lastSync": "2024-01-20T07:45:00Z",
+      "connectedModules": ["Appropriateness", "Claims"],
+      "dataPoints": 3210,
+      "uptime": 99.2,
+      "description": "Medical imaging storage and distribution system"
+    },
+    {
+      "id": "BILLING001",
+      "name": "Revenue Cycle Management",
+      "type": "Billing",
+      "vendor": "McKesson",
+      "version": "RCM 15.2",
+      "status": "warning",
+      "lastSync": "2024-01-20T06:30:00Z",
+      "connectedModules": ["Claims", "Pre-Auth"],
+      "dataPoints": 5632,
+      "uptime": 97.3,
+      "description": "Financial and billing system integration (connection intermittent)"
+    }
+  ]
+}

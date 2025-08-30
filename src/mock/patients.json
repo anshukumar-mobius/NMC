@@ -1,0 +1,479 @@
+{
+  "patients": [
+    {
+      "id": "P0001",
+      "mrn": "NMC2024001",
+      "name": "Omar Al-Mansouri",
+      "nameArabic": "عمر المنصوري",
+      "age": 45,
+      "dateOfBirth": "1979-03-15",
+      "gender": "Male",
+      "nationality": "UAE",
+      "emiratesId": "784-1979-1234567-8",
+      "phone": "+971-50-123-4567",
+      "email": "omar.almansouri@email.ae",
+      "address": {
+        "street": "Dubai Healthcare City",
+        "city": "Dubai",
+        "emirate": "Dubai",
+        "country": "UAE",
+        "postalCode": "00000"
+      },
+      "insuranceProvider": "ADNIC",
+      "insuranceNumber": "ADN123456789",
+      "insuranceTier": "Gold",
+      "insuranceExpiry": "2024-12-31",
+      "emergencyContact": {
+        "name": "Aisha Al-Mansouri",
+        "nameArabic": "عائشة المنصوري",
+        "relationship": "Wife",
+        "phone": "+971-50-765-4321"
+      },
+      "allergies": [
+        {
+          "allergen": "Penicillin",
+          "severity": "Severe",
+          "reaction": "Anaphylaxis",
+          "dateReported": "2020-05-15"
+        },
+        {
+          "allergen": "Shellfish",
+          "severity": "Moderate",
+          "reaction": "Hives, Swelling",
+          "dateReported": "2018-08-22"
+        }
+      ],
+      "riskFlags": ["Diabetes Type 2", "Hypertension", "High Cholesterol", "Family History of CAD"],
+      "bloodType": "O+",
+      "maritalStatus": "Married",
+      "occupation": "Engineer",
+      "preferredLanguage": "Arabic",
+      "religion": "Islam",
+      "lastVisit": "2024-01-15T10:30:00Z",
+      "nextAppointment": "2024-01-22T14:00:00Z",
+      "primaryPhysician": "Dr. Ahmed Al-Rashid",
+      "chronicConditions": [
+        {
+          "condition": "Type 2 Diabetes Mellitus",
+          "icdCode": "E11.9",
+          "diagnosedDate": "2018-03-10",
+          "status": "Active",
+          "severity": "Moderate"
+        },
+        {
+          "condition": "Essential Hypertension",
+          "icdCode": "I10",
+          "diagnosedDate": "2019-07-22",
+          "status": "Active",
+          "severity": "Mild"
+        },
+        {
+          "condition": "Hyperlipidemia",
+          "icdCode": "E78.5",
+          "diagnosedDate": "2020-01-15",
+          "status": "Active",
+          "severity": "Moderate"
+        }
+      ],
+      "currentMedications": [
+        {
+          "medication": "Metformin",
+          "dosage": "500mg",
+          "frequency": "BID",
+          "route": "Oral",
+          "startDate": "2018-03-10",
+          "prescribedBy": "Dr. Ahmed Al-Rashid",
+          "indication": "Type 2 Diabetes"
+        },
+        {
+          "medication": "Lisinopril",
+          "dosage": "10mg",
+          "frequency": "Daily",
+          "route": "Oral",
+          "startDate": "2019-07-22",
+          "prescribedBy": "Dr. Ahmed Al-Rashid",
+          "indication": "Hypertension"
+        },
+        {
+          "medication": "Atorvastatin",
+          "dosage": "20mg",
+          "frequency": "Daily",
+          "route": "Oral",
+          "startDate": "2020-01-15",
+          "prescribedBy": "Dr. Ahmed Al-Rashid",
+          "indication": "Hyperlipidemia"
+        }
+      ],
+      "vitals": {
+        "temperature": "36.7°C",
+        "bloodPressure": "135/85 mmHg",
+        "heartRate": "78 bpm",
+        "respiratoryRate": "16/min",
+        "oxygenSaturation": "98%",
+        "weight": "82 kg",
+        "height": "175 cm",
+        "bmi": "26.8",
+        "painScore": "2/10",
+        "lastRecorded": "2024-01-15T10:30:00Z"
+      },
+      "labResults": [
+        {
+          "test": "HbA1c",
+          "value": "7.2",
+          "unit": "%",
+          "referenceRange": "<7.0",
+          "status": "High",
+          "date": "2024-01-10"
+        },
+        {
+          "test": "Total Cholesterol",
+          "value": "195",
+          "unit": "mg/dL",
+          "referenceRange": "<200",
+          "status": "Normal",
+          "date": "2024-01-10"
+        },
+        {
+          "test": "Creatinine",
+          "value": "1.1",
+          "unit": "mg/dL",
+          "referenceRange": "0.7-1.3",
+          "status": "Normal",
+          "date": "2024-01-10"
+        }
+      ],
+      "socialHistory": {
+        "smokingStatus": "Former smoker",
+        "smokingHistory": "20 pack-years, quit 5 years ago",
+        "alcoholUse": "Occasional",
+        "exerciseFrequency": "2-3 times per week",
+        "dietaryRestrictions": ["Halal"]
+      },
+      "familyHistory": [
+        {
+          "relation": "Father",
+          "condition": "Coronary Artery Disease",
+          "ageAtDiagnosis": 55
+        },
+        {
+          "relation": "Mother",
+          "condition": "Type 2 Diabetes",
+          "ageAtDiagnosis": 62
+        }
+      ],
+      "immunizations": [
+        {
+          "vaccine": "COVID-19 (Pfizer)",
+          "date": "2023-09-15",
+          "doseNumber": "Booster 2"
+        },
+        {
+          "vaccine": "Influenza",
+          "date": "2023-10-01",
+          "doseNumber": "Annual"
+        }
+      ],
+      "careTeam": [
+        {
+          "name": "Dr. Ahmed Al-Rashid",
+          "role": "Primary Care Physician",
+          "department": "Internal Medicine"
+        },
+        {
+          "name": "Dr. Sarah Hassan",
+          "role": "Endocrinologist",
+          "department": "Endocrinology"
+        }
+      ]
+    },
+    {
+      "id": "P0002",
+      "mrn": "NMC2024002",
+      "name": "Sarah Johnson",
+      "nameArabic": "سارة جونسون",
+      "age": 32,
+      "dateOfBirth": "1992-08-20",
+      "gender": "Female",
+      "nationality": "UK",
+      "passportNumber": "UK123456789",
+      "phone": "+971-55-987-6543",
+      "email": "sarah.johnson@email.com",
+      "address": {
+        "street": "Dubai Marina",
+        "city": "Dubai",
+        "emirate": "Dubai",
+        "country": "UAE",
+        "postalCode": "00000"
+      },
+      "insuranceProvider": "DAMAN",
+      "insuranceNumber": "DMN987654321",
+      "insuranceTier": "Premium",
+      "insuranceExpiry": "2024-08-31",
+      "emergencyContact": {
+        "name": "Michael Johnson",
+        "relationship": "Husband",
+        "phone": "+971-55-123-9876"
+      },
+      "allergies": [
+        {
+          "allergen": "Latex",
+          "severity": "Mild",
+          "reaction": "Contact dermatitis",
+          "dateReported": "2020-03-10"
+        }
+      ],
+      "riskFlags": ["Pregnancy - 28 weeks", "Previous C-Section", "Gestational Diabetes Risk"],
+      "bloodType": "A+",
+      "maritalStatus": "Married",
+      "occupation": "Marketing Manager",
+      "preferredLanguage": "English",
+      "religion": "Christian",
+      "lastVisit": "2024-01-18T15:45:00Z",
+      "nextAppointment": "2024-01-25T09:30:00Z",
+      "primaryPhysician": "Dr. Amina Hassan",
+      "chronicConditions": [
+        {
+          "condition": "Pregnancy",
+          "icdCode": "Z34.90",
+          "diagnosedDate": "2023-07-15",
+          "status": "Active",
+          "severity": "Normal"
+        }
+      ],
+      "currentMedications": [
+        {
+          "medication": "Prenatal vitamins",
+          "dosage": "1 tablet",
+          "frequency": "Daily",
+          "route": "Oral",
+          "startDate": "2023-07-15",
+          "prescribedBy": "Dr. Amina Hassan",
+          "indication": "Pregnancy support"
+        },
+        {
+          "medication": "Folic acid",
+          "dosage": "5mg",
+          "frequency": "Daily",
+          "route": "Oral",
+          "startDate": "2023-07-15",
+          "prescribedBy": "Dr. Amina Hassan",
+          "indication": "Neural tube defect prevention"
+        },
+        {
+          "medication": "Iron supplements",
+          "dosage": "65mg",
+          "frequency": "Daily",
+          "route": "Oral",
+          "startDate": "2023-10-01",
+          "prescribedBy": "Dr. Amina Hassan",
+          "indication": "Iron deficiency anemia prevention"
+        }
+      ],
+      "vitals": {
+        "temperature": "36.5°C",
+        "bloodPressure": "118/72 mmHg",
+        "heartRate": "88 bpm",
+        "respiratoryRate": "18/min",
+        "oxygenSaturation": "99%",
+        "weight": "68 kg",
+        "height": "165 cm",
+        "bmi": "25.0",
+        "painScore": "0/10",
+        "lastRecorded": "2024-01-18T15:45:00Z"
+      },
+      "labResults": [
+        {
+          "test": "Glucose (Random)",
+          "value": "95",
+          "unit": "mg/dL",
+          "referenceRange": "70-140",
+          "status": "Normal",
+          "date": "2024-01-15"
+        },
+        {
+          "test": "Hemoglobin",
+          "value": "11.8",
+          "unit": "g/dL",
+          "referenceRange": "11.0-15.0",
+          "status": "Normal",
+          "date": "2024-01-15"
+        }
+      ],
+      "pregnancyDetails": {
+        "gestationalAge": "28 weeks 3 days",
+        "expectedDeliveryDate": "2024-04-15",
+        "gravida": 2,
+        "para": 1,
+        "previousDeliveries": [
+          {
+            "date": "2020-05-15",
+            "type": "C-Section",
+            "complications": "None"
+          }
+        ]
+      },
+      "socialHistory": {
+        "smokingStatus": "Never smoker",
+        "alcoholUse": "None during pregnancy",
+        "exerciseFrequency": "Light exercise 3 times per week",
+        "dietaryRestrictions": ["Pregnancy diet"]
+      },
+      "immunizations": [
+        {
+          "vaccine": "Tdap",
+          "date": "2023-11-01",
+          "doseNumber": "Pregnancy dose"
+        },
+        {
+          "vaccine": "COVID-19 (Pfizer)",
+          "date": "2023-08-15",
+          "doseNumber": "Updated booster"
+        }
+      ],
+      "careTeam": [
+        {
+          "name": "Dr. Amina Hassan",
+          "role": "Obstetrician",
+          "department": "Obstetrics & Gynecology"
+        },
+        {
+          "name": "Fatima Al-Zahra",
+          "role": "Nurse Midwife",
+          "department": "Obstetrics & Gynecology"
+        }
+      ]
+    },
+    {
+      "id": "P0003",
+      "mrn": "NMC2024003",
+      "name": "Ahmed Hassan",
+      "nameArabic": "أحمد حسن",
+      "age": 67,
+      "dateOfBirth": "1957-11-08",
+      "gender": "Male",
+      "nationality": "Egypt",
+      "passportNumber": "EG987654321",
+      "phone": "+971-52-456-7890",
+      "email": "ahmed.hassan@email.com",
+      "address": {
+        "street": "Al Nahda",
+        "city": "Sharjah",
+        "emirate": "Sharjah",
+        "country": "UAE",
+        "postalCode": "00000"
+      },
+      "insuranceProvider": "Thiqa",
+      "insuranceNumber": "THQ456789123",
+      "insuranceTier": "Standard",
+      "insuranceExpiry": "2024-11-30",
+      "emergencyContact": {
+        "name": "Maryam Hassan",
+        "nameArabic": "مريم حسن",
+        "relationship": "Daughter",
+        "phone": "+971-52-789-0123"
+      },
+      "allergies": [
+        {
+          "allergen": "Aspirin",
+          "severity": "Moderate",
+          "reaction": "GI bleeding",
+          "dateReported": "2019-06-12"
+        }
+      ],
+      "riskFlags": ["COPD", "Atrial Fibrillation", "Fall Risk", "Polypharmacy"],
+      "bloodType": "B+",
+      "maritalStatus": "Widowed",
+      "occupation": "Retired Teacher",
+      "preferredLanguage": "Arabic",
+      "religion": "Islam",
+      "lastVisit": "2024-01-12T11:00:00Z",
+      "nextAppointment": "2024-01-26T10:00:00Z",
+      "primaryPhysician": "Dr. Hassan Mahmoud",
+      "chronicConditions": [
+        {
+          "condition": "Chronic Obstructive Pulmonary Disease",
+          "icdCode": "J44.1",
+          "diagnosedDate": "2015-09-20",
+          "status": "Active",
+          "severity": "Moderate"
+        },
+        {
+          "condition": "Atrial Fibrillation",
+          "icdCode": "I48.91",
+          "diagnosedDate": "2020-02-14",
+          "status": "Active",
+          "severity": "Persistent"
+        }
+      ],
+      "currentMedications": [
+        {
+          "medication": "Tiotropium",
+          "dosage": "18mcg",
+          "frequency": "Daily",
+          "route": "Inhaled",
+          "startDate": "2015-09-20",
+          "prescribedBy": "Dr. Hassan Mahmoud",
+          "indication": "COPD maintenance"
+        },
+        {
+          "medication": "Warfarin",
+          "dosage": "5mg",
+          "frequency": "Daily",
+          "route": "Oral",
+          "startDate": "2020-02-14",
+          "prescribedBy": "Dr. Hassan Mahmoud",
+          "indication": "Anticoagulation for AF"
+        }
+      ],
+      "vitals": {
+        "temperature": "36.8°C",
+        "bloodPressure": "142/88 mmHg",
+        "heartRate": "95 bpm (irregular)",
+        "respiratoryRate": "22/min",
+        "oxygenSaturation": "94% on room air",
+        "weight": "75 kg",
+        "height": "170 cm",
+        "bmi": "26.0",
+        "painScore": "3/10",
+        "lastRecorded": "2024-01-12T11:00:00Z"
+      },
+      "labResults": [
+        {
+          "test": "INR",
+          "value": "2.3",
+          "unit": "",
+          "referenceRange": "2.0-3.0",
+          "status": "Therapeutic",
+          "date": "2024-01-10"
+        },
+        {
+          "test": "BNP",
+          "value": "180",
+          "unit": "pg/mL",
+          "referenceRange": "<100",
+          "status": "Elevated",
+          "date": "2024-01-10"
+        }
+      ],
+      "socialHistory": {
+        "smokingStatus": "Former smoker",
+        "smokingHistory": "40 pack-years, quit 10 years ago",
+        "alcoholUse": "None",
+        "exerciseFrequency": "Limited due to COPD",
+        "dietaryRestrictions": ["Low sodium", "Halal"]
+      },
+      "careTeam": [
+        {
+          "name": "Dr. Hassan Mahmoud",
+          "role": "Pulmonologist",
+          "department": "Pulmonary Medicine"
+        },
+        {
+          "name": "Dr. Khalid Al-Rashid",
+          "role": "Cardiologist",
+          "department": "Cardiology"
+        }
+      ]
+    }
+  ]
+}

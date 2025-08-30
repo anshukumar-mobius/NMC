@@ -1,0 +1,72 @@
+{
+  "rules": [
+    {
+      "id": "R001",
+      "name": "High-Risk Drug Interaction Alert",
+      "family": "medication_safety",
+      "severity": "critical",
+      "description": "Alert when prescribing drugs with known dangerous interactions",
+      "active": true,
+      "triggers": 1847,
+      "overrides": 23,
+      "acceptanceRate": 98.8,
+      "lastModified": "2024-01-10T08:30:00Z",
+      "cds": {
+        "condition": "drug_interaction",
+        "action": "alert_prescriber",
+        "message": "Critical drug interaction detected between prescribed medications"
+      }
+    },
+    {
+      "id": "R002",
+      "name": "Sepsis Early Warning System",
+      "family": "clinical_deterioration",
+      "severity": "high",
+      "description": "Early identification of sepsis risk based on vital signs and lab values",
+      "active": true,
+      "triggers": 324,
+      "overrides": 45,
+      "acceptanceRate": 86.1,
+      "lastModified": "2024-01-08T14:20:00Z",
+      "cds": {
+        "condition": "sepsis_risk",
+        "action": "escalate_care",
+        "message": "Patient shows signs consistent with early sepsis - consider urgent evaluation"
+      }
+    },
+    {
+      "id": "R003",
+      "name": "Diabetic Foot Care Reminder",
+      "family": "chronic_disease",
+      "severity": "medium",
+      "description": "Reminder for annual diabetic foot examination",
+      "active": true,
+      "triggers": 156,
+      "overrides": 12,
+      "acceptanceRate": 92.3,
+      "lastModified": "2024-01-05T11:15:00Z",
+      "cds": {
+        "condition": "diabetes_annual_exam",
+        "action": "schedule_appointment",
+        "message": "Annual diabetic foot examination due for this patient"
+      }
+    },
+    {
+      "id": "R004",
+      "name": "Contrast Agent Allergy Check",
+      "family": "imaging_safety",
+      "severity": "critical",
+      "description": "Verify patient allergy status before contrast imaging studies",
+      "active": true,
+      "triggers": 89,
+      "overrides": 2,
+      "acceptanceRate": 97.8,
+      "lastModified": "2024-01-12T16:45:00Z",
+      "cds": {
+        "condition": "contrast_allergy_risk",
+        "action": "verify_allergies",
+        "message": "Patient has documented contrast allergy - verify before proceeding"
+      }
+    }
+  ]
+}

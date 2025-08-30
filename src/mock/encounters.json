@@ -1,0 +1,62 @@
+{
+  "encounters": [
+    {
+      "id": "E0001",
+      "patientId": "P0001",
+      "patientName": "Omar Al-Mansouri",
+      "type": "Outpatient Visit",
+      "department": "Internal Medicine",
+      "provider": "Dr. Ahmed Al-Rashid",
+      "date": "2024-01-15T10:30:00Z",
+      "status": "completed",
+      "chiefComplaint": "Follow-up for diabetes and hypertension management",
+      "diagnosis": ["Type 2 Diabetes Mellitus", "Essential Hypertension"],
+      "alerts": [
+        {
+          "id": "A001",
+          "ruleId": "R001",
+          "severity": "medium",
+          "message": "HbA1c due for routine monitoring",
+          "timestamp": "2024-01-15T10:35:00Z",
+          "status": "acknowledged",
+          "action": "lab_order_placed"
+        }
+      ],
+      "vitals": {
+        "temperature": "36.7°C",
+        "bloodPressure": "135/85 mmHg",
+        "heartRate": "78 bmp",
+        "weight": "82 kg"
+      }
+    },
+    {
+      "id": "E0002",
+      "patientId": "P0002",
+      "patientName": "Sarah Johnson",
+      "type": "Prenatal Visit",
+      "department": "Obstetrics & Gynecology",
+      "provider": "Dr. Amina Hassan",
+      "date": "2024-01-18T15:45:00Z",
+      "status": "completed",
+      "chiefComplaint": "Routine prenatal check - 28 weeks gestation",
+      "diagnosis": ["Pregnancy - 28 weeks", "Previous cesarean delivery"],
+      "alerts": [
+        {
+          "id": "A002",
+          "ruleId": "R005",
+          "severity": "low",
+          "message": "Glucose screening test due",
+          "timestamp": "2024-01-18T15:50:00Z",
+          "status": "pending",
+          "action": "schedule_gtt"
+        }
+      ],
+      "vitals": {
+        "temperature": "36.5°C",
+        "bloodPressure": "118/72 mmHg",
+        "heartRate": "88 bpm",
+        "weight": "68 kg"
+      }
+    }
+  ]
+}

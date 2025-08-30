@@ -1,0 +1,88 @@
+{
+  "claims": [
+    {
+      "id": "C0001",
+      "patientId": "P0001",
+      "patientName": "Omar Al-Mansouri",
+      "payerName": "ADNIC",
+      "claimAmount": 1250.00,
+      "currency": "AED",
+      "serviceDate": "2024-01-15",
+      "submissionDate": "2024-01-16",
+      "status": "pending_review",
+      "type": "outpatient",
+      "provider": "Dr. Ahmed Al-Rashid",
+      "department": "Internal Medicine",
+      "services": [
+        {
+          "code": "99213",
+          "description": "Office visit - established patient",
+          "amount": 450.00
+        },
+        {
+          "code": "80053",
+          "description": "Comprehensive metabolic panel",
+          "amount": 180.00
+        },
+        {
+          "code": "83036",
+          "description": "Hemoglobin A1c",
+          "amount": 120.00
+        }
+      ],
+      "preAuthRequired": false,
+      "estimatedTAT": "3-5 business days"
+    },
+    {
+      "id": "C0002",
+      "patientId": "P0002",
+      "patientName": "Sarah Johnson",
+      "payerName": "DAMAN",
+      "claimAmount": 2800.00,
+      "currency": "AED",
+      "serviceDate": "2024-01-18",
+      "submissionDate": "2024-01-19",
+      "status": "pre_auth_required",
+      "type": "outpatient",
+      "provider": "Dr. Amina Hassan",
+      "department": "Obstetrics & Gynecology",
+      "services": [
+        {
+          "code": "99214",
+          "description": "Office visit - established patient, moderate complexity",
+          "amount": 650.00
+        },
+        {
+          "code": "76805",
+          "description": "Ultrasound, pregnant uterus, real time",
+          "amount": 850.00
+        },
+        {
+          "code": "82947",
+          "description": "Glucose tolerance test",
+          "amount": 200.00
+        }
+      ],
+      "preAuthRequired": true,
+      "estimatedTAT": "24-48 hours"
+    }
+  ],
+  "preAuths": [
+    {
+      "id": "PA0001",
+      "patientId": "P0001",
+      "patientName": "Omar Al-Mansouri",
+      "payerName": "ADNIC",
+      "requestedAmount": 3500.00,
+      "currency": "AED",
+      "serviceType": "MRI Brain with contrast",
+      "requestDate": "2024-01-20",
+      "status": "approved",
+      "approvalDate": "2024-01-21",
+      "validUntil": "2024-02-21",
+      "authorizationNumber": "AUTH-2024-001234",
+      "requestingProvider": "Dr. Priya Sharma",
+      "clinicalJustification": "Patient experiencing persistent headaches with neurological symptoms, rule out intracranial pathology"
+    }
+  ]
+}

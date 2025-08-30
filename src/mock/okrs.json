@@ -1,0 +1,70 @@
+{
+  "okrs": [
+    {
+      "id": "okr001",
+      "title": "Patient Safety Excellence",
+      "objective": "Achieve zero preventable harm events",
+      "keyResults": [
+        {
+          "description": "Reduce medication errors by 25%",
+          "progress": 78,
+          "target": 100,
+          "unit": "%"
+        },
+        {
+          "description": "Maintain hand hygiene compliance >95%",
+          "progress": 97,
+          "target": 95,
+          "unit": "%"
+        }
+      ],
+      "owner": "Quality Manager",
+      "status": "on_track",
+      "quarter": "Q1 2024"
+    },
+    {
+      "id": "okr002",
+      "title": "Clinical Efficiency Optimization",
+      "objective": "Improve healthcare delivery efficiency by 20%",
+      "keyResults": [
+        {
+          "description": "Reduce average length of stay by 1.2 days",
+          "progress": 65,
+          "target": 100,
+          "unit": "%"
+        },
+        {
+          "description": "Increase bed turnover rate by 15%",
+          "progress": 82,
+          "target": 100,
+          "unit": "%"
+        }
+      ],
+      "owner": "CMO",
+      "status": "at_risk",
+      "quarter": "Q1 2024"
+    },
+    {
+      "id": "okr003",
+      "title": "JCI Accreditation Readiness",
+      "objective": "Maintain 100% JCI compliance across all standards",
+      "keyResults": [
+        {
+          "description": "Complete medication reconciliation >98%",
+          "progress": 94,
+          "target": 98,
+          "unit": "%"
+        },
+        {
+          "description": "Patient identification compliance 100%",
+          "progress": 99.2,
+          "target": 100,
+          "unit": "%"
+        }
+      ],
+      "owner": "Quality Manager",
+      "status": "on_track",
+      "quarter": "Q1 2024"
+    }
+  ]
+}

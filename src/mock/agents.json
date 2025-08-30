@@ -1,0 +1,118 @@
+{
+  "agents": [
+    {
+      "id": "sentinel",
+      "name": "Sentinel",
+      "capability": "Real-time patient monitoring and early warning detection",
+      "status": "active",
+      "type": "monitoring",
+      "lastActivity": "2024-01-20T08:45:00Z",
+      "metrics": {
+        "alertsTriggered": 47,
+        "accuracy": 94.2,
+        "responseTime": "1.2s"
+      },
+      "recentActions": [
+        "Detected sepsis risk in patient P0045",
+        "Alerted nursing staff about medication due",
+        "Identified potential drug interaction"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "navigator",
+      "name": "Navigator", 
+      "capability": "Clinical pathway optimization and care coordination",
+      "status": "active",
+      "type": "coordination",
+      "lastActivity": "2024-01-20T08:32:00Z",
+      "metrics": {
+        "pathwaysOptimized": 23,
+        "efficiencyGain": "12%",
+        "costSavings": "AED 15,400"
+      },
+      "recentActions": [
+        "Optimized discharge pathway for cardiac patient",
+        "Coordinated multi-disciplinary team meeting",
+        "Reduced length of stay by 1.5 days"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "mediator",
+      "name": "Mediator",
+      "capability": "Insurance pre-authorization and claims processing",
+      "status": "active", 
+      "type": "financial",
+      "lastActivity": "2024-01-20T08:28:00Z",
+      "metrics": {
+        "preAuthsProcessed": 156,
+        "approvalRate": 89.7,
+        "avgTAT": "3.2 hours"
+      },
+      "recentActions": [
+        "Generated pre-auth package for MRI",
+        "Submitted claim to DAMAN",
+        "Negotiated coverage for experimental treatment"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "kya",
+      "name": "KYA (Know Your Antibiotics)",
+      "capability": "Antimicrobial stewardship and resistance monitoring", 
+      "status": "active",
+      "type": "clinical",
+      "lastActivity": "2024-01-20T08:15:00Z",
+      "metrics": {
+        "appropriateUse": 91.5,
+        "resistanceReduction": "8%",
+        "costOptimization": "AED 32,100"
+      },
+      "recentActions": [
+        "Recommended de-escalation therapy",
+        "Identified resistance pattern",
+        "Suggested culture-guided treatment"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "pi",
+      "name": "Pi (Performance Intelligence)",
+      "capability": "Clinical performance analytics and quality metrics",
+      "status": "active",
+      "type": "analytics", 
+      "lastActivity": "2024-01-20T08:10:00Z",
+      "metrics": {
+        "metricsTracked": 145,
+        "anomaliesDetected": 12,
+        "reportGenerated": 34
+      },
+      "recentActions": [
+        "Generated quality dashboard update",
+        "Identified readmission trend",
+        "Produced JCI compliance report"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "marco",
+      "name": "Marco (Medical AI Research COordinator)",
+      "capability": "Clinical research coordination and data analysis",
+      "status": "maintenance",
+      "type": "research",
+      "lastActivity": "2024-01-19T16:00:00Z", 
+      "metrics": {
+        "studiesManaged": 8,
+        "enrollmentRate": 67.3,
+        "dataQuality": 98.1
+      },
+      "recentActions": [
+        "Identified eligible research subjects",
+        "Generated recruitment report",
+        "Validated clinical trial data"
+      ],
+      "enabled": false
+    }
+  ]
+}

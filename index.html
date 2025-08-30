@@ -8,6 +8,14 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      if (typeof global === 'undefined') {
+        var global = globalThis;
+      }
+      if (typeof Buffer === 'undefined') {
+        globalThis.Buffer = require('buffer').Buffer;
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

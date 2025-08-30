@@ -18,5 +18,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['jsonwebtoken', 'jws', 'util'],
   },
 });

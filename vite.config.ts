@@ -7,6 +7,7 @@ export default defineConfig({
   define: {
     global: 'window',
     Buffer: 'globalThis.Buffer',
+    process: 'globalThis.process',
   },
   resolve: {
     alias: {

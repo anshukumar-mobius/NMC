@@ -1,5 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { RoleGuard } from '../Auth/RoleGuard';
+import { useAuth } from '../../contexts/AuthContext';
+import { RoleGuard } from '../Auth/RoleGuard';
 import {
   HomeIcon,
   UserGroupIcon,
@@ -15,21 +19,78 @@ import {
 } from '@heroicons/react/24/outline';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Patients', href: '/patients', icon: UserGroupIcon },
-  { name: 'CDS Console', href: '/cds', icon: ShieldCheckIcon },
-  { name: 'Appropriateness', href: '/appropriateness', icon: DocumentMagnifyingGlassIcon },
-  { name: 'ICD Mapping', href: '/icd', icon: CodeBracketIcon },
-  { name: 'Claims & Pre-Auth', href: '/claims', icon: CreditCardIcon },
-  { name: 'Rules Library', href: '/rules', icon: Cog6ToothIcon },
-  { name: 'Audit Trail', href: '/audit', icon: ClipboardDocumentListIcon },
-  { name: 'Source Systems', href: '/sources', icon: ServerIcon },
-  { name: 'Agents Console', href: '/agents', icon: CpuChipIcon },
-  { name: 'Risk Register', href: '/risk-register', icon: ChartBarIcon },
+  { 
+    name: 'Dashboard', 
+    href: '/', 
+    icon: HomeIcon,
+    requiredPermissions: ['view_dashboard']
+  },
+  { 
+    name: 'Patients', 
+    href: '/patients', 
+    icon: UserGroupIcon,
+    requiredPermissions: ['view_patients']
+  },
+  { 
+    name: 'CDS Console', 
+    href: '/cds', 
+    icon: ShieldCheckIcon,
+    requiredPermissions: ['cds_access']
+  },
+  { 
+    name: 'Appropriateness', 
+    href: '/appropriateness', 
+    icon: DocumentMagnifyingGlassIcon,
+    requiredPermissions: ['appropriateness_check']
+  },
+  { 
+    name: 'ICD Mapping', 
+    href: '/icd', 
+    icon: CodeBracketIcon,
+    requiredPermissions: ['icd_coding']
+  },
+  { 
+    name: 'Claims & Pre-Auth', 
+    href: '/claims', 
+    icon: CreditCardIcon,
+    requiredPermissions: ['view_patients']
+  },
+  { 
+    name: 'Rules Library', 
+    href: '/rules', 
+    icon: Cog6ToothIcon,
+    requiredPermissions: ['rules_management']
+  },
+  { 
+    name: 'Audit Trail', 
+    href: '/audit', 
+    icon: ClipboardDocumentListIcon,
+    requiredPermissions: ['audit_access']
+  },
+  { 
+    name: 'Source Systems', 
+    href: '/sources', 
+    icon: ServerIcon,
+    requiredPermissions: ['system_admin']
+  },
+  { 
+    name: 'Agents Console', 
+    href: '/agents', 
+    icon: CpuChipIcon,
+    requiredPermissions: ['system_admin']
+  },
+  { 
+    name: 'Risk Register', 
+    href: '/risk-register', 
+    icon: ChartBarIcon,
+    requiredPermissions: ['quality_metrics']
+  }
 ];
 
 export function Sidebar() {
   const location = useLocation();
+  const { hasPermission } = useAuth();
+  const { hasPermission } = useAuth();
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
@@ -51,6 +112,16 @@ export function Sidebar() {
               <ul role="list" className="-mx-2 space-y-1">
                 {navigation.map((item) => {
                   const isActive = location.pathname === item.href;
+                  
+                  // Check if user has required permissions
+                  const hasAccess = item.requiredPermissions.some(permission => 
+                    hasPermission(permission)
+                  );
+                  
+                  if (!hasAccess) {
+                    return null;
+                  }
+                  
                   return (
                     <li key={item.name}>
                       <Link

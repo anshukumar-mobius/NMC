@@ -368,9 +368,9 @@ export function RiskRegister() {
     // Apply search
     if (searchQuery.trim()) {
       filtered = filtered.filter(risk =>
-        risk.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        risk.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        risk.owner.toLowerCase().includes(searchQuery.toLowerCase())
+        (risk.title && risk.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (risk.description && risk.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (risk.owner && risk.owner.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 

@@ -21,7 +21,6 @@ import {
   InformationCircleIcon,
   SignalIcon,
   CloudIcon,
-  DatabaseIcon,
   WifiIcon,
   BoltIcon,
   ExclamationCircleIcon,
@@ -474,10 +473,10 @@ export function SourceSystems() {
     // Apply search
     if (searchQuery.trim()) {
       filtered = filtered.filter(system =>
-        system.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        system.vendor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        system.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        system.purpose.toLowerCase().includes(searchQuery.toLowerCase())
+        (system.name && system.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (system.vendor && system.vendor.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (system.category && system.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (system.purpose && system.purpose.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 

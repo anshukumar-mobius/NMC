@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { mockApi } from '../../utils/mockApi';
 import { useAuth } from '../../auth/AuthContext';
+import { useGetInstanceQuery } from '../../api/query';
 
 interface User {
   id: string;
@@ -21,9 +22,9 @@ export function Header() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const usersData = await mockApi.getUsers();
-        setUsers(usersData);
-        
+        const { data: Cdsusers } = useGetInstanceQuery(import.meta.env.VITE_USERS);
+        setUsers(Cdsusers);
+
         // Use the authenticated user if available, otherwise default to first user
         if (authUser) {
           setCurrentUser({
@@ -35,7 +36,7 @@ export function Header() {
             avatar: authUser.avatar
           });
         } else {
-          setCurrentUser(usersData[0]); // Default to first user
+          setCurrentUser(Cdsusers[0]); // Default to first user
         }
       } catch (error) {
         console.error('Error loading users:', error);

@@ -14,6 +14,41 @@ import {
   CheckCircleIcon,
   PlusCircleIcon
 } from '@heroicons/react/24/outline';
+import { getInstance, getJoinInstance } from '../api/axios';
+
+// Define interfaces for OKR data structure
+interface KeyResult {
+  description: string;
+  progress: number;
+  target: number;
+  unit: string;
+}
+
+interface APIOkr {
+  id: string;
+  title: string;
+  objective: string;
+  keyResults: KeyResult[];
+  owner: string;
+  status: string;
+  quarter: string;
+}
+
+interface OKRApiItem {
+  unit: string;
+  okr_id: string;
+  description: string;
+  progress: number;
+  target: number;
+  piref_okr_id?: Array<{
+    owner: string;
+    id: string;
+    title: string;
+    objective: string;
+    status: string;
+    quarter: string;
+  }>;
+}
 
 export function Dashboard() {
   const [okrs, setOkrs] = useState<any[]>([]);
@@ -33,11 +68,53 @@ export function Dashboard() {
   useEffect(() => {
     const loadData = async () => {
       try {
+        // Log to check if environment variables are available
+        console.log('Environment variables:', {
+          okrKeyResults: import.meta.env.VITE_OKR_KEY_RESULTS,
+          kpis: import.meta.env.VITE_KPIS
+        });
+        
         const [okrData, kpiData] = await Promise.all([
-          mockApi.getOKRs(),
-          mockApi.getKPIs()
+          getJoinInstance(import.meta.env.VITE_OKR_KEY_RESULTS || "68b5777a449b0c059a42adce"),
+          getInstance(import.meta.env.VITE_KPIS || "68b58555449b0c059a42addd", undefined),
         ]);
-        setOkrs(okrData);
+        
+        // Transform the OKR data to match the okrs.json format
+        const transformedOkrs = okrData.content.map((item: OKRApiItem) => {
+          const okrRef = item.piref_okr_id && item.piref_okr_id[0];
+          
+          return {
+            id: item.okr_id,
+            title: okrRef?.title || '',
+            objective: okrRef?.objective || '',
+            keyResults: [{
+              description: item.description,
+              progress: item.progress,
+              target: item.target,
+              unit: item.unit
+            }],
+            owner: okrRef?.owner || '',
+            status: okrRef?.status?.toLowerCase().replace(' ', '_') || 'in_progress',
+            quarter: okrRef?.quarter || ''
+          };
+        });
+        
+        // Group key results by OKR ID
+        const groupedOkrs = transformedOkrs.reduce((acc: any[], curr: any) => {
+          const existingOkr = acc.find((okr: any) => okr.id === curr.id);
+          
+          if (existingOkr) {
+            // Add key result to existing OKR
+            existingOkr.keyResults.push(...curr.keyResults);
+          } else {
+            // Add new OKR to accumulator
+            acc.push(curr);
+          }
+          
+          return acc;
+        }, []);
+        
+        setOkrs(groupedOkrs);
         setKpis(kpiData);
         setFilteredKpis(kpiData);
       } catch (error) {
@@ -48,6 +125,8 @@ export function Dashboard() {
     };
     loadData();
   }, []);
+
+    console.log("okrs", okrs);
 
   useEffect(() => {
     let filtered = kpis;
@@ -252,7 +331,13 @@ export function Dashboard() {
               const categoryKpis = kpis.filter(kpi => kpi.category === category);
               const onTargetCount = categoryKpis.filter(kpi => {
                 const lowerIsBetter = ['Rate', 'TAT', 'Time', 'Days', 'Error', 'Fall', 'Turnover', 'Denial', 'Wait'].some(term => 
-                  kpi.name.includes(term) || kpi.unit.includes('per') || kpi.unit.includes('days') || kpi.unit.includes('hours') || kpi.unit.includes('minutes')
+                  (kpi.name && kpi.name.includes(term)) || 
+                  (kpi.unit && (
+                    kpi.unit.includes('per') || 
+                    kpi.unit.includes('days') || 
+                    kpi.unit.includes('hours') || 
+                    kpi.unit.includes('minutes')
+                  ))
                 );
                 return lowerIsBetter ? kpi.value <= kpi.target : kpi.value >= kpi.target;
               }).length;

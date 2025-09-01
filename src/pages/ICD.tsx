@@ -14,6 +14,7 @@ import {
   CpuChipIcon,
   LightBulbIcon,
   BeakerIcon,
+  ClockIcon,
   HeartIcon,
   EyeIcon,
   ScissorsIcon,
@@ -24,8 +25,7 @@ import {
   BookOpenIcon,
   AcademicCapIcon,
   ShieldCheckIcon,
-  ChartBarIcon,
-  ClockIcon
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 
 interface ICDCode {

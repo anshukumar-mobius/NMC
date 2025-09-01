@@ -45,7 +45,8 @@ export function KPITile({ kpi, onClick }: KPITileProps) {
 
   const getTrendColor = () => {
     // For metrics where higher is better (satisfaction, adherence)
-    if (kpi.category === 'quality' || kpi.name.includes('Adherence') || kpi.name.includes('Response')) {
+    if (kpi.category === 'quality' || 
+        (kpi.name && (kpi.name.includes('Adherence') || kpi.name.includes('Response')))) {
       switch (kpi.trend) {
         case 'up':
           return 'text-green-700 bg-green-50';
@@ -90,7 +91,13 @@ export function KPITile({ kpi, onClick }: KPITileProps) {
   const isOnTarget = () => {
     // For metrics where lower is better
     const lowerIsBetter = ['Rate', 'TAT', 'Time', 'Days', 'Error', 'Fall', 'Turnover', 'Denial', 'Wait'].some(term => 
-      kpi.name.includes(term) || kpi.unit.includes('per') || kpi.unit.includes('days') || kpi.unit.includes('hours') || kpi.unit.includes('minutes')
+      (kpi.name && kpi.name.includes(term)) || 
+      (kpi.unit && (
+        kpi.unit.includes('per') || 
+        kpi.unit.includes('days') || 
+        kpi.unit.includes('hours') || 
+        kpi.unit.includes('minutes')
+      ))
     );
     
     if (lowerIsBetter) {
@@ -106,7 +113,13 @@ export function KPITile({ kpi, onClick }: KPITileProps) {
     
     // For metrics where lower is better
     const lowerIsBetter = ['Rate', 'TAT', 'Time', 'Days', 'Error', 'Fall', 'Turnover', 'Denial', 'Wait'].some(term => 
-      kpi.name.includes(term) || kpi.unit.includes('per') || kpi.unit.includes('days') || kpi.unit.includes('hours') || kpi.unit.includes('minutes')
+      (kpi.name && kpi.name.includes(term)) || 
+      (kpi.unit && (
+        kpi.unit.includes('per') || 
+        kpi.unit.includes('days') || 
+        kpi.unit.includes('hours') || 
+        kpi.unit.includes('minutes')
+      ))
     );
     
     if (lowerIsBetter) {

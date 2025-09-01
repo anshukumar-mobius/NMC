@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { mockApi } from '../utils/mockApi';
+import { useGetInstanceQuery } from '../api/query';
 
 // Define user roles
 export type UserRole = 'admin' | 'user' | 'guest';
@@ -103,8 +104,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       // In a real app, you'd make an API call to validate credentials
       // For this mock implementation, we'll just fetch users and find one with matching email
-      const users = await mockApi.getUsers();
-      const matchedUser = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+      const { data: users } = useGetInstanceQuery(import.meta.env.VITE_USERS);
+      const matchedUser = users?.find((u: { email: string; }) => u.email.toLowerCase() === email.toLowerCase());
       
       // Simulate password validation (in a real app, you'd hash and compare)
       // For this mock, we'll accept any password for simplicity
@@ -171,7 +172,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Check if user has a specific permission
   const hasPermission = (permission: string): boolean => {
-    if (!user) return false;
+    if (!user || !user.permissions) return false;
     return user.permissions.includes(permission);
   };
 

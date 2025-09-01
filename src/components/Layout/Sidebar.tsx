@@ -102,10 +102,10 @@ export function Sidebar() {
               <li className="mt-auto">
                 <div className="rounded-lg bg-blue-50 p-3">
                   <div className="text-sm font-medium text-blue-700">
-                    Role: {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    Role: {user.persona}
                   </div>
-                  <div className="text-xs text-blue-500 mt-1">
-                    {user.persona}
+                  <div className="text-xs text-black mt-1">
+                    Powered by Mobius
                   </div>
                 </div>
               </li>

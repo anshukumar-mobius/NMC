@@ -48,7 +48,13 @@ export function KPIDetailModal({ kpi, isOpen, onClose }: KPIDetailModalProps) {
 
   // Determine if lower values are better for this KPI
   const lowerIsBetter = ['Rate', 'TAT', 'Time', 'Days', 'Error', 'Fall', 'Turnover', 'Denial', 'Wait'].some(term => 
-    kpi.name.includes(term) || kpi.unit.includes('per') || kpi.unit.includes('days') || kpi.unit.includes('hours') || kpi.unit.includes('minutes')
+    (kpi.name && kpi.name.includes(term)) || 
+    (kpi.unit && (
+      kpi.unit.includes('per') || 
+      kpi.unit.includes('days') || 
+      kpi.unit.includes('hours') || 
+      kpi.unit.includes('minutes')
+    ))
   );
 
   const getStatusColor = () => {
@@ -92,11 +98,13 @@ export function KPIDetailModal({ kpi, isOpen, onClose }: KPIDetailModalProps) {
     const currentMonth = new Date().getMonth();
     
     // Parse the change value from the KPI data
-    const changeStr = kpi.change.replace(/[+]/g, ''); // Remove plus sign but keep minus sign
+    const changeStr = kpi.change ? kpi.change.replace(/[+]/g, '') : '0'; // Remove plus sign but keep minus sign
     const changeValue = parseFloat(changeStr.replace(/[%]/g, '')) || 0.1;
     
     // Determine if the change is a percentage or absolute value
-    const isPercentage = kpi.change.includes('%') || kpi.unit === '%' || kpi.unit.includes('per');
+    const isPercentage = (kpi.change && kpi.change.includes('%')) || 
+                         kpi.unit === '%' || 
+                         (kpi.unit && kpi.unit.includes('per'));
     
     // Calculate the exact rate of change based on trend direction and change value
     let changeRate;
@@ -107,9 +115,9 @@ export function KPIDetailModal({ kpi, isOpen, onClose }: KPIDetailModalProps) {
     }
     
     // Adjust the sign based on trend direction
-    if (kpi.trend === 'down' && !changeStr.includes('-')) {
+    if (kpi.trend === 'down' && (changeStr && !changeStr.includes('-'))) {
       changeRate = -changeRate;
-    } else if (kpi.trend === 'up' && changeStr.includes('-')) {
+    } else if (kpi.trend === 'up' && (changeStr && changeStr.includes('-'))) {
       changeRate = -changeRate;
     }
     

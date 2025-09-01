@@ -708,10 +708,10 @@ export function QualityMetrics() {
     // Apply search
     if (searchQuery.trim()) {
       filtered = filtered.filter(kpi =>
-        kpi.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        kpi.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        kpi.riskDomain.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        kpi.owner.toLowerCase().includes(searchQuery.toLowerCase())
+        (kpi.name && kpi.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (kpi.description && kpi.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (kpi.riskDomain && kpi.riskDomain.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (kpi.owner && kpi.owner.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
@@ -792,7 +792,8 @@ export function QualityMetrics() {
   const getTrendColor = (kpi: QualityKPI) => {
     // For metrics where lower is better
     const lowerIsBetter = ['Rate', 'Error', 'Time', 'Days', 'Incidents'].some(term => 
-      kpi.name.includes(term) || kpi.unit.includes('per') || kpi.unit.includes('days') || kpi.unit.includes('minutes')
+      (kpi.name && kpi.name.includes(term)) || 
+      (kpi.unit && (kpi.unit.includes('per') || kpi.unit.includes('days') || kpi.unit.includes('minutes')))
     );
     
     if (lowerIsBetter) {
@@ -909,7 +910,8 @@ export function QualityMetrics() {
               <p className="text-3xl font-bold text-green-600">
                 {kpis.filter(k => {
                   const lowerIsBetter = ['Rate', 'Error', 'Time', 'Days', 'Incidents'].some(term => 
-                    k.name.includes(term) || k.unit.includes('per') || k.unit.includes('days') || k.unit.includes('minutes')
+                    (k.name && k.name.includes(term)) || 
+                    (k.unit && (k.unit.includes('per') || k.unit.includes('days') || k.unit.includes('minutes')))
                   );
                   return lowerIsBetter ? k.value <= k.target : k.value >= k.target;
                 }).length}

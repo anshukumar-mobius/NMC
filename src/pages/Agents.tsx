@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { mockApi } from '../utils/mockApi';
 import {
   CpuChipIcon,
   PlayIcon,
@@ -7,29 +6,19 @@ import {
   StopIcon,
   Cog6ToothIcon,
   ChartBarIcon,
-  ClockIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
   BoltIcon,
-  ShieldCheckIcon,
   HeartIcon,
   BeakerIcon,
-  DocumentTextIcon,
   UserGroupIcon,
   AcademicCapIcon,
-  LightBulbIcon,
-  ArrowPathIcon,
   EyeIcon,
-  PencilIcon,
-  TrashIcon,
-  PlusIcon,
   XCircleIcon,
   SignalIcon,
-  CloudIcon,
-  ServerIcon,
-  WifiIcon
 } from '@heroicons/react/24/outline';
+import { getJoinInstance } from '../api/axios';
 
 interface Agent {
   id: string;
@@ -74,326 +63,346 @@ export function Agents() {
 
   // Mock agents data
   const mockAgents: Agent[] = [
-    {
-      id: 'sentinel',
-      name: 'Sentinel',
-      capability: 'Real-time patient monitoring and early warning detection',
-      status: 'active',
-      type: 'monitoring',
-      lastActivity: '2024-01-20T08:45:00Z',
-      enabled: true,
-      version: '2.1.3',
-      uptime: 99.7,
-      metrics: {
-        alertsTriggered: 47,
-        accuracy: 94.2,
-        responseTime: '1.2s',
-        patientsMonitored: 156
-      },
-      recentActions: [
-        'Detected sepsis risk in patient P0045 - Alert sent to ICU team',
-        'Alerted nursing staff about medication due for patient P0023',
-        'Identified potential drug interaction for patient P0067',
-        'Triggered early warning for deteriorating vitals in patient P0089',
-        'Recommended care escalation for patient P0012'
-      ],
-      configuration: {
-        monitoringInterval: 30,
-        alertThreshold: 0.8,
-        enabledAlerts: ['sepsis', 'deterioration', 'medication'],
-        escalationDelay: 300,
-        maxConcurrentPatients: 200
-      },
-      dependencies: ['EMR System', 'Vital Signs Monitor', 'Lab System'],
-      resources: {
-        cpu: 45,
-        memory: 62,
-        storage: 23
-      },
-      performance: {
-        successRate: 94.2,
-        avgResponseTime: '1.2s',
-        throughput: '150 alerts/hour'
-      },
-      alerts: [
-        {
-          level: 'info',
-          message: 'Successfully processed 47 alerts in the last hour',
-          timestamp: '2024-01-20T08:45:00Z'
-        },
-        {
-          level: 'warning',
-          message: 'High CPU usage detected - consider scaling',
-          timestamp: '2024-01-20T07:30:00Z'
-        }
-      ]
+  {
+    "id": "sentinel",
+    "name": "Sentinel",
+    "capability": "Real-time patient monitoring and early warning detection",
+    "status": "active",
+    "type": "monitoring",
+    "lastActivity": "2024-01-20T08:45:00Z",
+    "enabled": true,
+    "version": "2.1.3",
+    "uptime": 99.7,
+    "metrics": {
+      "alertsTriggered": 47,
+      "accuracy": 94.2,
+      "responseTime": "1.2s",
+      "patientsMonitored": 156
     },
-    {
-      id: 'navigator',
-      name: 'Navigator',
-      capability: 'Clinical pathway optimization and care coordination',
-      status: 'active',
-      type: 'coordination',
-      lastActivity: '2024-01-20T08:32:00Z',
-      enabled: true,
-      version: '1.8.2',
-      uptime: 98.9,
-      metrics: {
-        pathwaysOptimized: 23,
-        efficiencyGain: '12%',
-        costSavings: 'AED 15,400',
-        avgLengthOfStay: '3.2 days'
-      },
-      recentActions: [
-        'Optimized discharge pathway for cardiac patient - Reduced LOS by 1.5 days',
-        'Coordinated multi-disciplinary team meeting for complex case',
-        'Identified bottleneck in radiology scheduling - Suggested optimization',
-        'Recommended early mobilization protocol for orthopedic patients',
-        'Streamlined medication reconciliation process'
-      ],
-      configuration: {
-        optimizationAlgorithm: 'machine_learning',
-        pathwayTypes: ['cardiac', 'orthopedic', 'general_surgery'],
-        coordinationMode: 'proactive',
-        meetingScheduler: true,
-        costOptimization: true
-      },
-      dependencies: ['EMR System', 'Scheduling System', 'Resource Management'],
-      resources: {
-        cpu: 38,
-        memory: 55,
-        storage: 41
-      },
-      performance: {
-        successRate: 89.7,
-        avgResponseTime: '2.1s',
-        throughput: '25 optimizations/day'
-      },
-      alerts: [
-        {
-          level: 'info',
-          message: 'Pathway optimization completed for 23 patients',
-          timestamp: '2024-01-20T08:32:00Z'
-        }
-      ]
+    "recentActions": [
+      "Detected sepsis risk in patient P0045 - Alert sent to ICU team",
+      "Alerted nursing staff about medication due for patient P0023",
+      "Identified potential drug interaction for patient P0067",
+      "Triggered early warning for deteriorating vitals in patient P0089",
+      "Recommended care escalation for patient P0012"
+    ],
+    "configuration": {
+      "monitoringInterval": 30,
+      "alertThreshold": 0.8,
+      "enabledAlerts": ["sepsis", "deterioration", "medication"],
+      "escalationDelay": 300,
+      "maxConcurrentPatients": 200
     },
-    {
-      id: 'mediator',
-      name: 'Mediator',
-      capability: 'Insurance pre-authorization and claims processing',
-      status: 'active',
-      type: 'financial',
-      lastActivity: '2024-01-20T08:28:00Z',
-      enabled: true,
-      version: '3.0.1',
-      uptime: 99.2,
-      metrics: {
-        preAuthsProcessed: 156,
-        approvalRate: 89.7,
-        avgTAT: '3.2 hours',
-        costSavings: 'AED 45,200'
-      },
-      recentActions: [
-        'Generated pre-auth package for MRI - Approved in 2.1 hours',
-        'Submitted claim to DAMAN - Processing status updated',
-        'Negotiated coverage for experimental treatment - Approved',
-        'Identified billing discrepancy - Corrected before submission',
-        'Automated prior authorization for routine procedures'
-      ],
-      configuration: {
-        insuranceProviders: ['ADNIC', 'DAMAN', 'Thiqa', 'Others'],
-        autoSubmission: true,
-        approvalThreshold: 0.85,
-        escalationRules: true,
-        documentGeneration: 'automated'
-      },
-      dependencies: ['Billing System', 'Insurance APIs', 'Document Management'],
-      resources: {
-        cpu: 52,
-        memory: 48,
-        storage: 67
-      },
-      performance: {
-        successRate: 89.7,
-        avgResponseTime: '3.2h',
-        throughput: '156 auths/day'
-      },
-      alerts: [
-        {
-          level: 'info',
-          message: 'Processed 156 pre-authorizations with 89.7% approval rate',
-          timestamp: '2024-01-20T08:28:00Z'
-        },
-        {
-          level: 'warning',
-          message: 'DAMAN API response time increased - monitoring',
-          timestamp: '2024-01-20T06:15:00Z'
-        }
-      ]
+    "dependencies": ["EMR System", "Vital Signs Monitor", "Lab System"],
+    "resources": {
+      "cpu": 45,
+      "memory": 62,
+      "storage": 23
     },
-    {
-      id: 'kya',
-      name: 'KYA (Know Your Antibiotics)',
-      capability: 'Antimicrobial stewardship and resistance monitoring',
-      status: 'active',
-      type: 'clinical',
-      lastActivity: '2024-01-20T08:15:00Z',
-      enabled: true,
-      version: '2.3.0',
-      uptime: 97.8,
-      metrics: {
-        appropriateUse: 91.5,
-        resistanceReduction: '8%',
-        costOptimization: 'AED 32,100',
-        interventions: 67
-      },
-      recentActions: [
-        'Recommended de-escalation therapy for patient P0034',
-        'Identified resistance pattern in ICU - Updated protocols',
-        'Suggested culture-guided treatment for sepsis case',
-        'Flagged inappropriate broad-spectrum use - Intervention made',
-        'Generated antibiogram report for monthly review'
-      ],
-      configuration: {
-        stewardshipRules: 'CDC_guidelines',
-        resistanceTracking: true,
-        cultureIntegration: true,
-        costAnalysis: true,
-        interventionThreshold: 0.7
-      },
-      dependencies: ['Lab System', 'Pharmacy System', 'Microbiology'],
-      resources: {
-        cpu: 41,
-        memory: 39,
-        storage: 28
-      },
-      performance: {
-        successRate: 91.5,
-        avgResponseTime: '0.8s',
-        throughput: '67 interventions/week'
-      },
-      alerts: [
-        {
-          level: 'info',
-          message: 'Antimicrobial stewardship interventions: 67 this week',
-          timestamp: '2024-01-20T08:15:00Z'
-        },
-        {
-          level: 'warning',
-          message: 'Increased resistance pattern detected in ICU',
-          timestamp: '2024-01-19T14:22:00Z'
-        }
-      ]
+    "performance": {
+      "successRate": 94.2,
+      "avgResponseTime": "1.2s",
+      "throughput": "150 alerts/hour"
     },
-    {
-      id: 'pi',
-      name: 'Pi (Performance Intelligence)',
-      capability: 'Clinical performance analytics and quality metrics',
-      status: 'active',
-      type: 'analytics',
-      lastActivity: '2024-01-20T08:10:00Z',
-      enabled: true,
-      version: '1.9.4',
-      uptime: 99.1,
-      metrics: {
-        metricsTracked: 145,
-        anomaliesDetected: 12,
-        reportGenerated: 34,
-        dashboardViews: 892
+    "alerts": [
+      {
+        "level": "info",
+        "message": "Successfully processed 47 alerts in the last hour",
+        "timestamp": "2024-01-20T08:45:00Z"
       },
-      recentActions: [
-        'Generated quality dashboard update - 18 KPIs refreshed',
-        'Identified readmission trend in cardiology - Alert sent',
-        'Produced JCI compliance report - 98.7% compliance',
-        'Detected performance anomaly in OR scheduling',
-        'Created monthly executive summary report'
-      ],
-      configuration: {
-        metricsRefreshRate: 15,
-        anomalyDetection: true,
-        reportSchedule: 'daily',
-        dashboardCustomization: true,
-        alertThresholds: 'dynamic'
-      },
-      dependencies: ['Data Warehouse', 'EMR System', 'Quality System'],
-      resources: {
-        cpu: 67,
-        memory: 73,
-        storage: 89
-      },
-      performance: {
-        successRate: 98.1,
-        avgResponseTime: '0.5s',
-        throughput: '145 metrics/min'
-      },
-      alerts: [
-        {
-          level: 'info',
-          message: 'Generated 34 reports and tracked 145 metrics',
-          timestamp: '2024-01-20T08:10:00Z'
-        },
-        {
-          level: 'error',
-          message: 'Data source connection timeout - retrying',
-          timestamp: '2024-01-20T07:45:00Z'
-        }
-      ]
+      {
+        "level": "warning",
+        "message": "High CPU usage detected - consider scaling",
+        "timestamp": "2024-01-20T07:30:00Z"
+      }
+    ]
+  },
+  {
+    "id": "navigator",
+    "name": "Navigator",
+    "capability": "Comparative KPI exploration and physician benchmarking",
+    "status": "active",
+    "type": "analytics",
+    "lastActivity": "2024-01-20T10:05:00Z",
+    "enabled": true,
+    "version": "3.0.1",
+    "uptime": 98.9,
+    "metrics": {
+      "benchmarksGenerated": 32,
+      "accuracy": 92.5,
+      "avgQueryResponse": "2.5s",
+      "departmentsAnalyzed": 12
     },
-    {
-      id: 'marco',
-      name: 'Marco (Medical AI Research COordinator)',
-      capability: 'Clinical research coordination and data analysis',
-      status: 'maintenance',
-      type: 'research',
-      lastActivity: '2024-01-19T16:00:00Z',
-      enabled: false,
-      version: '1.2.1',
-      uptime: 0,
-      metrics: {
-        studiesManaged: 8,
-        enrollmentRate: 67.3,
-        dataQuality: 98.1,
-        publicationsSupported: 3
-      },
-      recentActions: [
-        'Identified eligible research subjects for diabetes study',
-        'Generated recruitment report - 67.3% enrollment rate',
-        'Validated clinical trial data - 98.1% quality score',
-        'Coordinated multi-site research protocol',
-        'Prepared regulatory submission documents'
-      ],
-      configuration: {
-        studyTypes: ['clinical_trials', 'observational', 'registry'],
-        dataValidation: 'automated',
-        recruitmentCriteria: 'AI_assisted',
-        complianceChecking: true,
-        reportGeneration: 'scheduled'
-      },
-      dependencies: ['Research Database', 'EMR System', 'Regulatory Systems'],
-      resources: {
-        cpu: 0,
-        memory: 0,
-        storage: 45
-      },
-      performance: {
-        successRate: 0,
-        avgResponseTime: 'N/A',
-        throughput: '0 studies/active'
-      },
-      alerts: [
-        {
-          level: 'warning',
-          message: 'Agent in maintenance mode - scheduled upgrade',
-          timestamp: '2024-01-19T16:00:00Z'
-        },
-        {
-          level: 'info',
-          message: 'Maintenance window: 2 hours remaining',
-          timestamp: '2024-01-20T06:00:00Z'
-        }
-      ]
-    }
-  ];
+    "recentActions": [
+      "Generated KPI variation index for Cardiology vs. Neurology",
+      "Identified protocol adherence gaps in Orthopedics",
+      "Highlighted antibiotic stewardship deviations for Dr. Smith",
+      "Created specialty composite score for Pediatrics",
+      "Visualized ALOS benchmark comparison across 3 hospitals"
+    ],
+    "configuration": {
+      "defaultFilters": ["specialty", "physician"],
+      "enableHeatmaps": true,
+      "benchmarkThreshold": 0.85,
+      "roleAdaptiveUX": true
+    },
+    "dependencies": ["EMR Data Warehouse", "KPI Graph Model", "Visualization Engine"],
+    "resources": {
+      "cpu": 38,
+      "memory": 55,
+      "storage": 18
+    },
+    "performance": {
+      "successRate": 92.5,
+      "avgResponseTime": "2.5s",
+      "throughput": "100 benchmarks/hour"
+    },
+    "alerts": [
+      {
+        "level": "info",
+        "message": "32 new benchmark analyses generated in last 24h",
+        "timestamp": "2024-01-20T09:50:00Z"
+      }
+    ]
+  },
+  {
+    "id": "aegis",
+    "name": "Aegis",
+    "capability": "Automated clinical escalation and governance enforcement",
+    "status": "active",
+    "type": "governance",
+    "lastActivity": "2024-01-20T09:15:00Z",
+    "enabled": true,
+    "version": "1.9.8",
+    "uptime": 99.3,
+    "metrics": {
+      "escalationsTriggered": 24,
+      "escalationSuccessRate": 88.7,
+      "avgTimeToEscalation": "3.4h",
+      "rolesEngaged": 15
+    },
+    "recentActions": [
+      "Escalated ICU sepsis cluster to CMO and Quality Director",
+      "Suppressed duplicate medication error alerts",
+      "Triggered escalation tree for Surgical Site Infections",
+      "Routed multiple unresolved ICU alerts to governance board",
+      "Logged escalation resolution turnaround for Neurology unit"
+    ],
+    "configuration": {
+      "escalationRules": ["persist > 4h", "multi-patient > 2"],
+      "maxEscalationDepth": 3,
+      "notifyRoles": ["CMO", "Quality Lead", "Unit Director"]
+    },
+    "dependencies": ["Sentinel", "Org Policy Graph", "Notification System"],
+    "resources": {
+      "cpu": 41,
+      "memory": 59,
+      "storage": 26
+    },
+    "performance": {
+      "successRate": 88.7,
+      "avgResponseTime": "3.4h",
+      "throughput": "50 escalations/day"
+    },
+    "alerts": [
+      {
+        "level": "warning",
+        "message": "3 unresolved escalations pending over 24h",
+        "timestamp": "2024-01-20T09:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "archivist",
+    "name": "Archivist",
+    "capability": "Immutable audit trail for all alerts, overrides, and actions",
+    "status": "active",
+    "type": "compliance",
+    "lastActivity": "2024-01-20T07:55:00Z",
+    "enabled": true,
+    "version": "2.4.0",
+    "uptime": 99.9,
+    "metrics": {
+      "auditLogsCaptured": 231,
+      "overrideEvents": 42,
+      "avgRetrievalTime": "1.5s",
+      "usersTracked": 84
+    },
+    "recentActions": [
+      "Recorded override of sepsis alert by Dr. Patel",
+      "Logged ICU threshold update to 0.75 sensitivity",
+      "Captured decision trail for antibiotic stewardship alert",
+      "Flagged repeated overrides for same patient in Pediatrics",
+      "Generated audit report for JCI compliance"
+    ],
+    "configuration": {
+      "logRetentionDays": 365,
+      "immutableLedger": true,
+      "enableAuditSearch": true,
+      "overrideAlerting": true
+    },
+    "dependencies": ["Sentinel", "Aegis", "Governance Ledger"],
+    "resources": {
+      "cpu": 27,
+      "memory": 43,
+      "storage": 71
+    },
+    "performance": {
+      "successRate": 99.9,
+      "avgResponseTime": "1.5s",
+      "throughput": "300 logs/hour"
+    },
+    "alerts": [
+      {
+        "level": "info",
+        "message": "231 audit events successfully recorded in last 24h",
+        "timestamp": "2024-01-20T07:50:00Z"
+      }
+    ]
+  },
+  {
+    "id": "synthesizer",
+    "name": "Synthesizer",
+    "capability": "Outcome attribution and ROI calculation of interventions",
+    "status": "active",
+    "type": "analytics",
+    "lastActivity": "2024-01-20T11:20:00Z",
+    "enabled": true,
+    "version": "1.6.5",
+    "uptime": 98.5,
+    "metrics": {
+      "interventionsLogged": 18,
+      "roiReportsGenerated": 11,
+      "accuracy": 90.8,
+      "avgAnalysisTime": "3.8s"
+    },
+    "recentActions": [
+      "Correlated discharge planning with reduced readmission rate",
+      "Generated ROI report for antibiotic stewardship initiative",
+      "Highlighted high-ROI intervention in Cardiology",
+      "Flagged unsuccessful hand hygiene campaign impact",
+      "Summarized financial savings from improved LOS metrics"
+    ],
+    "configuration": {
+      "impactWindowDays": 90,
+      "statConfidenceThreshold": 0.9,
+      "enableROIHeatmap": true
+    },
+    "dependencies": ["Navigator", "KPI Graph", "Financial DB"],
+    "resources": {
+      "cpu": 33,
+      "memory": 51,
+      "storage": 39
+    },
+    "performance": {
+      "successRate": 90.8,
+      "avgResponseTime": "3.8s",
+      "throughput": "60 analyses/day"
+    },
+    "alerts": [
+      {
+        "level": "info",
+        "message": "ROI attribution completed for 5 interventions yesterday",
+        "timestamp": "2024-01-20T11:10:00Z"
+      }
+    ]
+  },
+  {
+    "id": "configurator",
+    "name": "Configurator",
+    "capability": "Low-code KPI threshold and escalation rule configuration",
+    "status": "active",
+    "type": "governance",
+    "lastActivity": "2024-01-20T06:30:00Z",
+    "enabled": true,
+    "version": "2.0.2",
+    "uptime": 97.8,
+    "metrics": {
+      "rulesConfigured": 14,
+      "misconfigurationsDetected": 2,
+      "avgConfigSaveTime": "1.1s",
+      "usersActive": 9
+    },
+    "recentActions": [
+      "Set ICU medication error threshold to 0.8%",
+      "Validated conflicting escalation rules across Pediatrics and ICU",
+      "Logged KPI ownership mapping for Cardiology",
+      "Rolled back sepsis threshold update due to misconfiguration",
+      "Simulated impact of ALOS KPI adjustment"
+    ],
+    "configuration": {
+      "enableLowCodeUI": true,
+      "schemaValidation": true,
+      "defaultAuditLogging": true,
+      "rollbackEnabled": true
+    },
+    "dependencies": ["Governance DB", "Alert System", "Archivist"],
+    "resources": {
+      "cpu": 29,
+      "memory": 46,
+      "storage": 22
+    },
+    "performance": {
+      "successRate": 97.8,
+      "avgResponseTime": "1.1s",
+      "throughput": "40 rule updates/day"
+    },
+    "alerts": [
+      {
+        "level": "warning",
+        "message": "2 misconfigured rules detected during validation",
+        "timestamp": "2024-01-20T06:15:00Z"
+      }
+    ]
+  },
+  {
+    "id": "companion",
+    "name": "Companion",
+    "capability": "Patient-specific KPI insight and conversational assistance",
+    "status": "active",
+    "type": "assistant",
+    "lastActivity": "2024-01-20T12:10:00Z",
+    "enabled": true,
+    "version": "1.4.7",
+    "uptime": 96.9,
+    "metrics": {
+      "patientAlertsServed": 73,
+      "avgQueryTime": "1.9s",
+      "contextAccuracy": 91.3,
+      "activeUsers": 27
+    },
+    "recentActions": [
+      "Explained ICU deterioration alert for patient P0034 to Dr. Khan",
+      "Provided discharge readiness assessment for patient P0060",
+      "Summarized alert history for Mr. Ahmed’s ICU stay",
+      "Forecasted sepsis escalation risk for patient P0072",
+      "Presented override commentary summary for patient P0051"
+    ],
+    "configuration": {
+      "contextWindowDays": 30,
+      "conversationMode": "clinical-explainer",
+      "feedbackLearning": true
+    },
+    "dependencies": ["EMR", "LLM Engine", "Sentinel"],
+    "resources": {
+      "cpu": 52,
+      "memory": 68,
+      "storage": 31
+    },
+    "performance": {
+      "successRate": 91.3,
+      "avgResponseTime": "1.9s",
+      "throughput": "80 patient sessions/day"
+    },
+    "alerts": [
+      {
+        "level": "info",
+        "message": "73 patient alert explanations completed in last 24h",
+        "timestamp": "2024-01-20T12:05:00Z"
+      }
+    ]
+  }
+];
 
   useEffect(() => {
     const loadAgents = async () => {
@@ -506,6 +515,10 @@ export function Agents() {
     );
   }
 
+  getJoinInstance("68b5777a449b0c059a42adce").then(data => {
+    console.log('Agents data:', data);
+  });
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -576,128 +589,105 @@ export function Agents() {
             {/* Agent Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white">
                   {getTypeIcon(agent.type)}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900">{agent.name}</h3>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(agent.type)}`}>
-                    {agent.type.toUpperCase()}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(agent.type)}`}>
+                      {agent.type.toUpperCase()}
+                    </span>
+                    <span className="text-xs text-slate-500">v{agent.version}</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-2">
+              <div>
                 <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(agent.status)}`}>
                   {getStatusIcon(agent.status)}
                   {agent.status.toUpperCase()}
                 </span>
-                <span className="text-xs text-slate-500">v{agent.version}</span>
               </div>
             </div>
 
             {/* Agent Description */}
             <p className="text-slate-600 text-sm mb-4">{agent.capability}</p>
 
-            {/* Metrics */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {Object.entries(agent.metrics).slice(0, 4).map(([key, value]) => (
-                <div key={key} className="text-center p-2 bg-slate-50 rounded-lg">
-                  <div className="text-lg font-bold text-slate-900">{value}</div>
-                  <div className="text-xs text-slate-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+            {/* Core Information */}
+            <div className="mb-4 bg-slate-50 rounded-lg p-3">
+              <h5 className="text-sm font-medium text-slate-900 mb-2">Agent Information</h5>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">ID:</span>
+                  <span className="font-medium text-slate-900">{agent.id}</span>
                 </div>
-              ))}
-            </div>
-
-            {/* Resource Usage */}
-            <div className="mb-4">
-              <h5 className="text-sm font-medium text-slate-900 mb-2">Resource Usage</h5>
-              <div className="space-y-2">
-                {Object.entries(agent.resources).map(([resource, usage]) => (
-                  <div key={resource} className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 capitalize">{resource}:</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 bg-slate-200 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${getResourceColor(usage)}`}
-                          style={{ width: `${usage}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-slate-900 font-medium w-8">{usage}%</span>
-                    </div>
-                  </div>
-                ))}
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Last Active:</span>
+                  <span className="font-medium text-slate-900">{new Date(agent.lastActivity).toLocaleDateString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Dependencies:</span>
+                  <span className="font-medium text-slate-900">{agent.dependencies.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Uptime:</span>
+                  <span className="font-medium text-slate-900">{agent.uptime}%</span>
+                </div>
               </div>
             </div>
 
-            {/* Recent Actions */}
-            <div className="mb-4">
-              <h5 className="text-sm font-medium text-slate-900 mb-2">Recent Actions</h5>
-              <div className="space-y-1">
-                {agent.recentActions.slice(0, 2).map((action, idx) => (
-                  <p key={idx} className="text-xs text-slate-600 truncate">{action}</p>
-                ))}
-                {agent.recentActions.length > 2 && (
-                  <p className="text-xs text-slate-500">+{agent.recentActions.length - 2} more actions</p>
-                )}
+            {/* Key Metrics - Using only the most important ones */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <div className="text-xl font-bold text-blue-700">
+                  {agent.performance.successRate}%
+                </div>
+                <div className="text-xs text-slate-600">Success Rate</div>
+              </div>
+              <div className="text-center p-3 bg-green-50 rounded-lg">
+                <div className="text-xl font-bold text-green-700">
+                  {agent.performance.avgResponseTime}
+                </div>
+                <div className="text-xs text-slate-600">Response Time</div>
               </div>
             </div>
 
-            {/* Alerts */}
+            {/* Latest Alert - Show only the most recent one if it exists */}
             {agent.alerts.length > 0 && (
               <div className="mb-4">
-                <h5 className="text-sm font-medium text-slate-900 mb-2">Recent Alerts</h5>
-                <div className="space-y-1">
-                  {agent.alerts.slice(0, 2).map((alert, idx) => (
-                    <div key={idx} className={`flex items-start gap-2 p-2 rounded text-xs ${
-                      alert.level === 'error' ? 'bg-red-50 text-red-700' :
-                      alert.level === 'warning' ? 'bg-amber-50 text-amber-700' :
-                      'bg-blue-50 text-blue-700'
-                    }`}>
-                      {alert.level === 'error' ? <ExclamationTriangleIcon className="h-3 w-3 mt-0.5 flex-shrink-0" /> :
-                       alert.level === 'warning' ? <ExclamationTriangleIcon className="h-3 w-3 mt-0.5 flex-shrink-0" /> :
-                       <InformationCircleIcon className="h-3 w-3 mt-0.5 flex-shrink-0" />}
-                      <span className="flex-1">{alert.message}</span>
-                    </div>
-                  ))}
+                <h5 className="text-sm font-medium text-slate-900 mb-2">Latest Alert</h5>
+                <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
+                  agent.alerts[0].level === 'error' ? 'bg-red-50 text-red-700' :
+                  agent.alerts[0].level === 'warning' ? 'bg-amber-50 text-amber-700' :
+                  'bg-blue-50 text-blue-700'
+                }`}>
+                  {agent.alerts[0].level === 'error' ? <ExclamationTriangleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" /> :
+                   agent.alerts[0].level === 'warning' ? <ExclamationTriangleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" /> :
+                   <InformationCircleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />}
+                  <div>
+                    <span className="flex-1 font-medium">{agent.alerts[0].message}</span>
+                    <div className="text-xs mt-1 opacity-75">{new Date(agent.alerts[0].timestamp).toLocaleString()}</div>
+                  </div>
                 </div>
               </div>
             )}
-
-            {/* Performance */}
-            <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
-              <h5 className="text-sm font-medium text-slate-900 mb-2">Performance</h5>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="text-center">
-                  <div className="font-bold text-green-600">{agent.performance.successRate}%</div>
-                  <div className="text-slate-500">Success</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-blue-600">{agent.performance.avgResponseTime}</div>
-                  <div className="text-slate-500">Response</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-purple-600">{agent.uptime}%</div>
-                  <div className="text-slate-500">Uptime</div>
-                </div>
-              </div>
-            </div>
 
             {/* Action Buttons */}
             <div className="flex gap-2">
               <button
                 onClick={() => handleToggleAgent(agent.id)}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                className={`flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
                   agent.enabled 
                     ? 'bg-red-600 text-white hover:bg-red-700' 
                     : 'bg-green-600 text-white hover:bg-green-700'
                 }`}
               >
                 {agent.enabled ? <PauseIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
-                {agent.enabled ? 'Stop' : 'Start'}
+                {agent.enabled ? 'Stop Agent' : 'Start Agent'}
               </button>
               <button
                 onClick={() => setSelectedAgent(agent)}
-                className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium"
+                className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium"
               >
                 <EyeIcon className="h-4 w-4" />
                 Details
@@ -707,7 +697,7 @@ export function Agents() {
                   setSelectedAgent(agent);
                   setShowConfigModal(true);
                 }}
-                className="flex items-center gap-1 px-3 py-1.5 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors duration-200 text-sm font-medium"
+                className="flex items-center gap-1 px-3 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors duration-200 text-sm font-medium"
               >
                 <Cog6ToothIcon className="h-4 w-4" />
                 Config
@@ -831,25 +821,7 @@ export function Agents() {
                   </div>
                 </div>
 
-                <div className="bg-indigo-50 rounded-lg p-4">
-                  <h4 className="font-medium text-slate-900 mb-3">Resource Usage</h4>
-                  <div className="space-y-3">
-                    {Object.entries(selectedAgent.resources).map(([resource, usage]) => (
-                      <div key={resource}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-slate-600 capitalize">{resource}</span>
-                          <span className="font-medium">{usage}%</span>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full ${getResourceColor(usage)}`}
-                            style={{ width: `${usage}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                
               </div>
             </div>
 

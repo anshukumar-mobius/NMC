@@ -1,7 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { RoleGuard } from '../Auth/RoleGuard';
 import {
   ShieldCheckIcon,
   ExclamationTriangleIcon,
@@ -24,8 +22,6 @@ interface CDSWidgetProps {
 }
 
 export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
-  const { hasPermission } = useAuth();
-  
   const mockAlerts: CDSAlert[] = [
     {
       id: 'CDS001',
@@ -116,15 +112,13 @@ export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
             <p className="text-sm text-slate-500">Active alerts and recommendations</p>
           </div>
         </div>
-        <RoleGuard requiredPermissions={['cds_access']}>
-          <Link
-            to="/cds"
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors duration-200"
-          >
-            View All
-            <ArrowRightIcon className="h-4 w-4" />
-          </Link>
-        </RoleGuard>
+        <Link
+          to="/cds"
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors duration-200"
+        >
+          View All
+          <ArrowRightIcon className="h-4 w-4" />
+        </Link>
       </div>
 
       {/* Alert Summary */}
@@ -158,9 +152,7 @@ export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
                 </span>
               </div>
               <p className="text-sm font-medium text-slate-900 truncate">{alert.title}</p>
-              <RoleGuard requiredPermissions={['view_patients']}>
-                <p className="text-xs text-slate-500">Patient: {alert.patient}</p>
-              </RoleGuard>
+              <p className="text-xs text-slate-500">Patient: {alert.patient}</p>
               <p className="text-xs text-slate-400">{new Date(alert.timestamp).toLocaleString()}</p>
             </div>
           </div>
@@ -178,24 +170,20 @@ export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
       {/* Quick Actions */}
       <div className="mt-6 pt-4 border-t border-slate-200">
         <div className="grid grid-cols-2 gap-3">
-          <RoleGuard requiredPermissions={['cds_access']}>
-            <Link
-              to="/cds"
-              className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-200 text-sm font-medium"
-            >
-              <ShieldCheckIcon className="h-4 w-4" />
-              Open Console
-            </Link>
-          </RoleGuard>
-          <RoleGuard requiredPermissions={['rules_management']}>
-            <Link
-              to="/rules"
-              className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors duration-200 text-sm font-medium"
-            >
-              <BellIcon className="h-4 w-4" />
-              Manage Rules
-            </Link>
-          </RoleGuard>
+          <Link
+            to="/cds"
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-200 text-sm font-medium"
+          >
+            <ShieldCheckIcon className="h-4 w-4" />
+            Open Console
+          </Link>
+          <Link
+            to="/rules"
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors duration-200 text-sm font-medium"
+          >
+            <BellIcon className="h-4 w-4" />
+            Manage Rules
+          </Link>
         </div>
       </div>
     </div>

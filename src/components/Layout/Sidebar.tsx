@@ -65,6 +65,16 @@ export function Sidebar() {
               <ul role="list" className="-mx-2 space-y-1">
                 {filteredNavigation.map((item) => {
                   const isActive = location.pathname === item.href;
+                  
+                  // Check if user has required permissions
+                  const hasAccess = item.requiredPermissions.some(permission => 
+                    hasPermission(permission)
+                  );
+                  
+                  if (!hasAccess) {
+                    return null;
+                  }
+                  
                   return (
                     <li key={item.name}>
                       <Link

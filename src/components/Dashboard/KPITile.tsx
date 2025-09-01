@@ -20,10 +20,17 @@ interface KPI {
 
 interface KPITileProps {
   kpi: KPI;
+  onClick?: (kpi: KPI) => void;
 }
 
-export function KPITile({ kpi }: KPITileProps) {
+export function KPITile({ kpi, onClick }: KPITileProps) {
   const [showDetails, setShowDetails] = React.useState(false);
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(kpi);
+    }
+  };
 
   const getTrendIcon = () => {
     switch (kpi.trend) {
@@ -110,7 +117,10 @@ export function KPITile({ kpi }: KPITileProps) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 relative">
+    <div 
+      className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 relative cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="flex items-start justify-between mb-4">
         <div>
           <div className="flex items-center gap-2 mb-2">

@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { mockApi } from '../utils/mockApi';
+import { useState, useEffect } from 'react';
+import { mockAuditEvents } from '../utils/mockAuditData';
+
+// Log the mockAuditEvents directly when the file is loaded
+console.log('AuditTrail.tsx - mockAuditEvents at import time:', mockAuditEvents);
+console.log('AuditTrail.tsx - mockAuditEvents type:', typeof mockAuditEvents);
+console.log('AuditTrail.tsx - mockAuditEvents is array?', Array.isArray(mockAuditEvents));
+console.log('AuditTrail.tsx - mockAuditEvents length:', mockAuditEvents?.length);
+
 import {
   ClipboardDocumentListIcon,
   MagnifyingGlassIcon,
@@ -7,20 +14,15 @@ import {
   CalendarDaysIcon,
   UserIcon,
   ComputerDesktopIcon,
-  DocumentTextIcon,
   EyeIcon,
   ShieldCheckIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
   CheckCircleIcon,
   XCircleIcon,
-  ClockIcon,
   ArrowDownTrayIcon,
   PrinterIcon,
-  ChartBarIcon,
   CpuChipIcon,
-  LockClosedIcon,
-  KeyIcon,
   GlobeAltIcon,
   DevicePhoneMobileIcon
 } from '@heroicons/react/24/outline';
@@ -67,19 +69,118 @@ export function AuditTrail() {
     dateRange: '7d'
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [dateRange, setDateRange] = useState({
-    start: '',
-    end: ''
-  });
 
   useEffect(() => {
+    // Hardcoded audit events directly in the component
+    const hardcodedEvents: AuditEvent[] = [
+      {
+        id: 'LOCAL001',
+        timestamp: '2025-08-30T14:30:15Z',
+        userId: 'u001',
+        userName: 'Dr. Ahmed Al-Rashid',
+        userRole: 'attending_physician',
+        action: 'PATIENT_RECORD_ACCESS',
+        resource: 'patient_record',
+        resourceId: 'P0001',
+        outcome: 'success',
+        ipAddress: '192.168.1.45',
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        sessionId: 'sess_abc123def456',
+        details: {
+          description: 'Accessed patient record for Omar Al-Mansouri during clinical consultation',
+          metadata: {
+            patientName: 'Omar Al-Mansouri',
+            mrn: 'NMC2024001',
+            accessReason: 'Clinical consultation',
+            duration: '15 minutes'
+          }
+        },
+        category: 'patient_access',
+        severity: 'low',
+        compliance: ['HIPAA', 'UAE DPA', 'JCI'],
+        location: 'Dubai Healthcare City - Clinic 3A',
+        deviceType: 'desktop'
+      },
+      {
+        id: 'LOCAL002',
+        timestamp: '2025-08-30T13:45:22Z',
+        userId: 'u002',
+        userName: 'Dr. Sarah Thompson',
+        userRole: 'resident',
+        action: 'MEDICATION_PRESCRIBED',
+        resource: 'medication_order',
+        resourceId: 'MED001',
+        outcome: 'success',
+        ipAddress: '192.168.1.67',
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        sessionId: 'sess_xyz789ghi012',
+        details: {
+          description: 'Prescribed Metformin 500mg BID for Type 2 Diabetes management',
+          changes: [
+            {
+              field: 'medication',
+              oldValue: 'None',
+              newValue: 'Metformin 500mg BID'
+            }
+          ],
+          metadata: {
+            patientId: 'P0001',
+            drugCode: 'NDC-12345',
+            prescriptionId: 'RX-2024-001'
+          }
+        },
+        category: 'clinical_decision',
+        severity: 'medium',
+        compliance: ['FDA', 'UAE MOH', 'JCI'],
+        location: 'Dubai Healthcare City - Emergency Department',
+        deviceType: 'desktop'
+      },
+      {
+        id: 'LOCAL003',
+        timestamp: '2025-08-29T12:15:08Z',
+        userId: 'u004',
+        userName: 'Dr. Hassan Mahmoud',
+        userRole: 'quality_manager',
+        action: 'CLINICAL_RULE_MODIFIED',
+        resource: 'clinical_rule',
+        resourceId: 'R001',
+        outcome: 'success',
+        ipAddress: '192.168.1.89',
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        sessionId: 'sess_qwe456rty789',
+        details: {
+          description: 'Modified drug interaction alert rule parameters',
+          changes: [
+            {
+              field: 'severity_threshold',
+              oldValue: 'major',
+              newValue: 'major,contraindicated'
+            }
+          ],
+          metadata: {
+            ruleName: 'High-Risk Drug Interaction Alert',
+            ruleVersion: '2.1',
+            approvedBy: 'Clinical Committee'
+          }
+        },
+        category: 'configuration',
+        severity: 'high',
+        compliance: ['JCI', 'ISMP'],
+        location: 'Dubai Healthcare City - Quality Office',
+        deviceType: 'desktop'
+      }
+    ];
+
+    // Simulate API call
     const loadAuditEvents = async () => {
       try {
-        // Fetch audit events from the mock API
-        const data = await mockApi.getAuditEvents();
-        setAuditEvents(data as AuditEvent[]);
-        setFilteredEvents(data as AuditEvent[]);
-        setLoading(false);
+        // Simulate a network delay
+        setTimeout(() => {
+          console.log('Using hardcoded events directly in component');
+          setAuditEvents(hardcodedEvents);
+          setFilteredEvents(hardcodedEvents);
+          setLoading(false);
+        }, 500);
       } catch (error) {
         console.error('Error loading audit events:', error);
         setLoading(false);

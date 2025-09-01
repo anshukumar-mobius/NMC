@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth, UserRole } from '../../auth/AuthContext';
 import {
   HomeIcon,
   UserGroupIcon,
@@ -14,22 +14,36 @@ import {
   ChartBarIcon
 } from '@heroicons/react/24/outline';
 
+// Define navigation with permissions
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Patients', href: '/patients', icon: UserGroupIcon },
-  { name: 'CDS Console', href: '/cds', icon: ShieldCheckIcon },
-  { name: 'Appropriateness', href: '/appropriateness', icon: DocumentMagnifyingGlassIcon },
-  { name: 'ICD Mapping', href: '/icd', icon: CodeBracketIcon },
-  { name: 'Claims & Pre-Auth', href: '/claims', icon: CreditCardIcon },
-  { name: 'Rules Library', href: '/rules', icon: Cog6ToothIcon },
-  { name: 'Audit Trail', href: '/audit', icon: ClipboardDocumentListIcon },
-  { name: 'Source Systems', href: '/sources', icon: ServerIcon },
-  { name: 'Agents Console', href: '/agents', icon: CpuChipIcon },
-  { name: 'Risk Register', href: '/risk-register', icon: ChartBarIcon },
+  { name: 'Dashboard', href: '/', icon: HomeIcon, requiredRole: ['admin', 'user', 'guest'] as UserRole[], permissions: [] },
+  { name: 'Patients', href: '/patients', icon: UserGroupIcon, requiredRole: ['admin', 'user'] as UserRole[], permissions: ['view_patients'] },
+  { name: 'CDS Console', href: '/cds', icon: ShieldCheckIcon, requiredRole: ['admin', 'user'] as UserRole[], permissions: ['cds_access'] },
+  { name: 'Appropriateness', href: '/appropriateness', icon: DocumentMagnifyingGlassIcon, requiredRole: ['admin', 'user'] as UserRole[], permissions: ['appropriateness_check'] },
+  { name: 'ICD Mapping', href: '/icd', icon: CodeBracketIcon, requiredRole: ['admin', 'user'] as UserRole[], permissions: ['icd_coding'] },
+  { name: 'Claims & Pre-Auth', href: '/claims', icon: CreditCardIcon, requiredRole: ['admin', 'user'] as UserRole[], permissions: [] },
+  { name: 'Rules Library', href: '/rules', icon: Cog6ToothIcon, requiredRole: ['admin'] as UserRole[], permissions: ['rules_management'] },
+  { name: 'Audit Trail', href: '/audit', icon: ClipboardDocumentListIcon, requiredRole: ['admin'] as UserRole[], permissions: ['audit_access'] },
+  { name: 'Source Systems', href: '/sources', icon: ServerIcon, requiredRole: ['admin'] as UserRole[], permissions: [] },
+  { name: 'Agents Console', href: '/agents', icon: CpuChipIcon, requiredRole: ['admin'] as UserRole[], permissions: [] },
+  { name: 'Risk Register', href: '/risk-register', icon: ChartBarIcon, requiredRole: ['admin'] as UserRole[], permissions: ['quality_metrics'] },
 ];
 
 export function Sidebar() {
   const location = useLocation();
+  const { user, hasRole, hasPermission } = useAuth();
+
+  // Filter navigation based on user role and permissions
+  const filteredNavigation = navigation.filter(item => {
+    // Check if user has required role
+    const hasRequiredRole = hasRole(item.requiredRole);
+    
+    // Check if user has all required permissions
+    const hasAllPermissions = item.permissions.length === 0 || 
+      item.permissions.every(permission => hasPermission(permission));
+    
+    return hasRequiredRole && hasAllPermissions;
+  });
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
@@ -49,7 +63,7 @@ export function Sidebar() {
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" className="-mx-2 space-y-1">
-                {navigation.map((item) => {
+                {filteredNavigation.map((item) => {
                   const isActive = location.pathname === item.href;
                   return (
                     <li key={item.name}>
@@ -74,6 +88,19 @@ export function Sidebar() {
                 })}
               </ul>
             </li>
+            
+            {user && (
+              <li className="mt-auto">
+                <div className="rounded-lg bg-blue-50 p-3">
+                  <div className="text-sm font-medium text-blue-700">
+                    Role: {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                  </div>
+                  <div className="text-xs text-blue-500 mt-1">
+                    {user.persona}
+                  </div>
+                </div>
+              </li>
+            )}
           </ul>
         </nav>
       </div>

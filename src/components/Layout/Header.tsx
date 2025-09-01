@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDownIcon, UserIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
+import { ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { mockApi } from '../../utils/mockApi';
+import { useAuth } from '../../auth/AuthContext';
 
 interface User {
   id: string;
@@ -15,19 +16,33 @@ export function Header() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user: authUser, logout } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const usersData = await mockApi.getUsers();
         setUsers(usersData);
-        setCurrentUser(usersData[0]); // Default to first user
+        
+        // Use the authenticated user if available, otherwise default to first user
+        if (authUser) {
+          setCurrentUser({
+            id: authUser.id,
+            name: authUser.name,
+            email: authUser.email,
+            persona: authUser.persona,
+            department: authUser.department,
+            avatar: authUser.avatar
+          });
+        } else {
+          setCurrentUser(usersData[0]); // Default to first user
+        }
       } catch (error) {
         console.error('Error loading users:', error);
       }
     };
     loadData();
-  }, []);
+  }, [authUser]);
 
   const handleUserSwitch = (user: User) => {
     setCurrentUser(user);
@@ -105,6 +120,17 @@ export function Header() {
                       )}
                     </button>
                   ))}
+                  
+                  {/* Logout button */}
+                  <div className="border-t border-slate-100 mt-2 pt-2">
+                    <button
+                      className="w-full flex items-center gap-x-3 px-4 py-3 text-sm text-left text-red-600 hover:bg-red-50 transition-colors duration-200"
+                      onClick={() => logout()}
+                    >
+                      <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                      <div className="font-medium">Logout</div>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

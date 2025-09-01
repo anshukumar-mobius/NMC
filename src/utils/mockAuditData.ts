@@ -1,0 +1,227 @@
+// Mock audit events for the AuditTrail component
+export const mockAuditEvents = [
+  {
+    id: 'AUD001',
+    timestamp: '2024-01-20T14:30:15Z',
+    userId: 'u001',
+    userName: 'Dr. Ahmed Al-Rashid',
+    userRole: 'attending_physician',
+    action: 'PATIENT_RECORD_ACCESS',
+    resource: 'patient_record',
+    resourceId: 'P0001',
+    outcome: 'success',
+    ipAddress: '192.168.1.45',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    sessionId: 'sess_abc123def456',
+    details: {
+      description: 'Accessed patient record for Omar Al-Mansouri during clinical consultation',
+      metadata: {
+        patientName: 'Omar Al-Mansouri',
+        mrn: 'NMC2024001',
+        accessReason: 'Clinical consultation',
+        duration: '15 minutes'
+      }
+    },
+    category: 'patient_access',
+    severity: 'low',
+    compliance: ['HIPAA', 'UAE DPA', 'JCI'],
+    location: 'Dubai Healthcare City - Clinic 3A',
+    deviceType: 'desktop'
+  },
+  {
+    id: 'AUD002',
+    timestamp: '2024-01-20T13:45:22Z',
+    userId: 'u002',
+    userName: 'Dr. Sarah Thompson',
+    userRole: 'resident',
+    action: 'MEDICATION_PRESCRIBED',
+    resource: 'medication_order',
+    resourceId: 'MED001',
+    outcome: 'success',
+    ipAddress: '192.168.1.67',
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+    sessionId: 'sess_xyz789ghi012',
+    details: {
+      description: 'Prescribed Metformin 500mg BID for Type 2 Diabetes management',
+      changes: [
+        {
+          field: 'medication',
+          oldValue: 'None',
+          newValue: 'Metformin 500mg BID'
+        },
+        {
+          field: 'indication',
+          oldValue: 'None',
+          newValue: 'Type 2 Diabetes Mellitus'
+        }
+      ],
+      metadata: {
+        patientId: 'P0001',
+        drugCode: 'NDC-12345',
+        prescriptionId: 'RX-2024-001'
+      }
+    },
+    category: 'clinical_decision',
+    severity: 'medium',
+    compliance: ['FDA', 'UAE MOH', 'JCI'],
+    location: 'Dubai Healthcare City - Emergency Department',
+    deviceType: 'desktop'
+  },
+  {
+    id: 'AUD003',
+    timestamp: '2024-01-20T12:15:08Z',
+    userId: 'u004',
+    userName: 'Dr. Hassan Mahmoud',
+    userRole: 'quality_manager',
+    action: 'CLINICAL_RULE_MODIFIED',
+    resource: 'clinical_rule',
+    resourceId: 'R001',
+    outcome: 'success',
+    ipAddress: '192.168.1.89',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    sessionId: 'sess_qwe456rty789',
+    details: {
+      description: 'Modified drug interaction alert rule parameters',
+      changes: [
+        {
+          field: 'severity_threshold',
+          oldValue: 'major',
+          newValue: 'major,contraindicated'
+        },
+        {
+          field: 'alert_delay',
+          oldValue: '5',
+          newValue: '0'
+        }
+      ],
+      metadata: {
+        ruleName: 'High-Risk Drug Interaction Alert',
+        ruleVersion: '2.1',
+        approvedBy: 'Clinical Committee'
+      }
+    },
+    category: 'configuration',
+    severity: 'high',
+    compliance: ['JCI', 'ISMP'],
+    location: 'Dubai Healthcare City - Quality Office',
+    deviceType: 'desktop'
+  },
+  {
+    id: 'AUD004',
+    timestamp: '2024-01-20T11:30:45Z',
+    userId: 'u003',
+    userName: 'Fatima Al-Zahra',
+    userRole: 'nurse',
+    action: 'MEDICATION_ADMINISTERED',
+    resource: 'medication_administration',
+    resourceId: 'MAR001',
+    outcome: 'success',
+    ipAddress: '192.168.1.23',
+    userAgent: 'Mozilla/5.0 (iPad; CPU OS 16_0 like Mac OS X) AppleWebKit/605.1.15',
+    sessionId: 'sess_iop123jkl456',
+    details: {
+      description: 'Administered Lisinopril 10mg to patient as prescribed',
+      metadata: {
+        patientId: 'P0001',
+        medicationName: 'Lisinopril',
+        dosage: '10mg',
+        route: 'Oral',
+        barcodeScan: 'true',
+        witnessNurse: 'Nurse Mary Johnson'
+      }
+    },
+    category: 'clinical_decision',
+    severity: 'medium',
+    compliance: ['JCI', 'Medication Safety'],
+    location: 'Dubai Healthcare City - ICU Ward 2',
+    deviceType: 'tablet'
+  },
+  {
+    id: 'AUD005',
+    timestamp: '2024-01-20T10:45:12Z',
+    userId: 'system',
+    userName: 'AEGLE AI System',
+    userRole: 'system',
+    action: 'CDS_ALERT_TRIGGERED',
+    resource: 'clinical_alert',
+    resourceId: 'CDS001',
+    outcome: 'success',
+    ipAddress: '10.0.0.1',
+    userAgent: 'AEGLE-AI-Engine/1.0',
+    sessionId: 'sys_ai_session_001',
+    details: {
+      description: 'AI system triggered sepsis early warning alert based on patient vitals',
+      metadata: {
+        patientId: 'P0003',
+        alertType: 'Sepsis Early Warning',
+        confidence: '89.7%',
+        triggerFactors: ['Temperature: 38.2°C', 'HR: 105 bpm', 'WBC: 15,000'],
+        ruleId: 'R002'
+      }
+    },
+    category: 'clinical_decision',
+    severity: 'high',
+    compliance: ['Clinical Guidelines', 'Sepsis Bundle'],
+    location: 'Dubai Healthcare City - AI Processing Center',
+    deviceType: 'api'
+  },
+  {
+    id: 'AUD006',
+    timestamp: '2024-01-20T09:20:33Z',
+    userId: 'u005',
+    userName: 'Dr. Priya Sharma',
+    userRole: 'radiologist',
+    action: 'IMAGING_REPORT_CREATED',
+    resource: 'imaging_report',
+    resourceId: 'IMG001',
+    outcome: 'success',
+    ipAddress: '192.168.1.156',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    sessionId: 'sess_rad789img012',
+    details: {
+      description: 'Created radiology report for chest X-ray examination',
+      metadata: {
+        patientId: 'P0002',
+        studyType: 'Chest X-Ray',
+        findings: 'Normal cardiac silhouette, clear lung fields',
+        impression: 'No acute cardiopulmonary abnormality',
+        studyDate: '2024-01-20'
+      }
+    },
+    category: 'data_modification',
+    severity: 'medium',
+    compliance: ['DICOM', 'Radiology Standards'],
+    location: 'Dubai Healthcare City - Radiology Department',
+    deviceType: 'desktop'
+  },
+  {
+    id: 'AUD011',
+    timestamp: '2024-01-20T04:25:33Z',
+    userId: 'u007',
+    userName: 'Dr. James Wilson',
+    userRole: 'specialist',
+    action: 'DOCUMENTATION_COMPLETED',
+    resource: 'clinical_note',
+    resourceId: 'NOTE001',
+    outcome: 'success',
+    ipAddress: '192.168.1.78',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    sessionId: 'sess_doc123note456',
+    details: {
+      description: 'Completed clinical documentation with AI assistance',
+      metadata: {
+        patientId: 'P0004',
+        noteType: 'Progress Note',
+        documentationTime: '4.2 minutes',
+        aiAssisted: 'true',
+        completenessScore: '97%',
+        manualEditCount: '2'
+      }
+    },
+    category: 'data_modification',
+    severity: 'low',
+    compliance: ['Documentation Standards', 'Clinical Quality'],
+    location: 'Dubai Healthcare City - Specialty Clinic',
+    deviceType: 'desktop'
+  }
+];

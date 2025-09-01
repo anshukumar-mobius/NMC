@@ -9,6 +9,7 @@ import claimsData from '../mock/claims.json';
 import sourcesData from '../mock/sources.json';
 import agentsData from '../mock/agents.json';
 import auditEventsData from '../mock/auditEvents.json';
+import { debugAuditEvents } from './auditUtils';
 
 // Simulate API latency
 const delay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms));
@@ -103,7 +104,16 @@ export const mockApi = {
   // Audit Events API
   async getAuditEvents() {
     await delay(450);
-    return auditEventsData.auditEvents;
+    console.log("Mock API - auditEventsData:", auditEventsData);
+    try {
+      // Use the debug utility to ensure proper structure
+      const processedEvents = debugAuditEvents(auditEventsData);
+      console.log("Processed audit events:", processedEvents.length);
+      return processedEvents;
+    } catch (error) {
+      console.error("Error processing audit events:", error);
+      return [];
+    }
   },
 
   async getAuditEventById(id: string) {

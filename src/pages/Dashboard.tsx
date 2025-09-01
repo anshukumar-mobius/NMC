@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { OKRCard } from '../components/Dashboard/OKRCard';
 import { KPITile } from '../components/Dashboard/KPITile';
 import { CDSWidget } from '../components/Dashboard/CDSWidget';
+import { KPIDetailModal } from '../components/Dashboard/KPIDetailModal';
+import { OKRFormModal } from '../components/Dashboard/OKRFormModal';
 import { mockApi } from '../utils/mockApi';
 import { 
   CalendarDaysIcon, 
@@ -9,14 +11,18 @@ import {
   UserIcon,
   ChartBarIcon,
   ClockIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  PlusCircleIcon
 } from '@heroicons/react/24/outline';
 
 export function Dashboard() {
-  const [okrs, setOkrs] = useState([]);
-  const [kpis, setKpis] = useState([]);
-  const [filteredKpis, setFilteredKpis] = useState([]);
+  const [okrs, setOkrs] = useState<any[]>([]);
+  const [kpis, setKpis] = useState<any[]>([]);
+  const [filteredKpis, setFilteredKpis] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedKpi, setSelectedKpi] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOKRFormOpen, setIsOKRFormOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState({
     dateRange: '30d',
     department: 'all',
@@ -201,7 +207,16 @@ export function Dashboard() {
 
       {/* OKR Cards */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-slate-900 mb-6">Objectives & Key Results</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-slate-900">Objectives & Key Results</h2>
+          <button
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            onClick={() => setIsOKRFormOpen(true)}
+          >
+            <PlusCircleIcon className="h-5 w-5 mr-2" />
+            Add New OKR
+          </button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {okrs.map((okr) => (
             <OKRCard key={okr.id} okr={okr} />
@@ -260,7 +275,14 @@ export function Dashboard() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredKpis.map((kpi) => (
-            <KPITile key={kpi.id} kpi={kpi} />
+            <KPITile 
+              key={kpi.id} 
+              kpi={kpi} 
+              onClick={(kpi) => {
+                setSelectedKpi(kpi);
+                setIsModalOpen(true);
+              }}
+            />
           ))}
         </div>
         
@@ -274,6 +296,19 @@ export function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* KPI Detail Modal */}
+      <KPIDetailModal 
+        kpi={selectedKpi}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+
+      {/* OKR Form Modal */}
+      <OKRFormModal
+        isOpen={isOKRFormOpen}
+        onClose={() => setIsOKRFormOpen(false)}
+      />
     </div>
   );
 }

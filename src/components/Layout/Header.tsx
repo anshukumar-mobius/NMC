@@ -16,7 +16,7 @@ export function Header() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { user: authUser, logout } = useAuth();
+  const { user: authUser, logout, switchUser } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
@@ -44,8 +44,14 @@ export function Header() {
     loadData();
   }, [authUser]);
 
-  const handleUserSwitch = (user: User) => {
+  const handleUserSwitch = async (user: User) => {
+    // Update the current displayed user
     setCurrentUser(user);
+    
+    // Also update the authenticated user in the auth context
+    await switchUser(user.id);
+    
+    // Close the menu
     setShowUserMenu(false);
   };
 

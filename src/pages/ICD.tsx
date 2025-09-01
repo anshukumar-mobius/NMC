@@ -24,7 +24,8 @@ import {
   BookOpenIcon,
   AcademicCapIcon,
   ShieldCheckIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline';
 
 interface ICDCode {

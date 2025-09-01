@@ -22,6 +22,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  switchUser: (userId: string) => Promise<boolean>;
   hasPermission: (permission: string) => boolean;
   hasRole: (role: UserRole | UserRole[]) => boolean;
 }
@@ -33,6 +34,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   login: async () => false,
   logout: () => {},
+  switchUser: async () => false,
   hasPermission: () => false,
   hasRole: () => false,
 });
@@ -136,6 +138,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.removeItem('auth_user');
   };
 
+  // Switch user function - allows switching between users without logging out
+  const switchUser = async (userId: string): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      // Find the user by ID
+      const newUser = await mockApi.getUserById(userId);
+      
+      if (newUser) {
+        // Assign role based on existing user data
+        const role = roleMapping[newUser.role] || 'guest';
+        
+        const authUser = {
+          ...newUser,
+          role
+        } as AuthUser;
+        
+        setUser(authUser);
+        // Store in localStorage for session persistence
+        localStorage.setItem('auth_user', JSON.stringify(authUser));
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('User switch error:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Check if user has a specific permission
   const hasPermission = (permission: string): boolean => {
     if (!user) return false;
@@ -160,6 +193,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isLoading,
     login,
     logout,
+    switchUser,
     hasPermission,
     hasRole,
   };

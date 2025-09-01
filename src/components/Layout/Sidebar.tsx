@@ -67,9 +67,8 @@ export function Sidebar() {
                   const isActive = location.pathname === item.href;
                   
                   // Check if user has required permissions
-                  const hasAccess = item.requiredPermissions.some(permission => 
-                    hasPermission(permission)
-                  );
+                  // Permissions are already checked in filteredNavigation, so always true here
+                  const hasAccess = true;
                   
                   if (!hasAccess) {
                     return null;

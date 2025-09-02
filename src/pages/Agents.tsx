@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   CpuChipIcon,
   PlayIcon,
@@ -18,7 +18,8 @@ import {
   XCircleIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline';
-import {useGetInstanceQuery} from "../api/query";
+// import {useGetInstanceQuery} from "../api/query";
+import agentsData from '../mock/agents.json';
 
 interface Agent {
   id: string;
@@ -61,47 +62,56 @@ export function Agents() {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [showConfigModal, setShowConfigModal] = useState(false);
 
-  // Get agents data using React Query
-  const agentSchemaId = import.meta.env.VITE_AGENTS || "68b58dde449b0c059a42ade1";
-  const { data: agentData, isLoading, error } = useGetInstanceQuery(agentSchemaId);
+  // Comment out the React Query implementation
+  // const agentSchemaId = import.meta.env.VITE_AGENTS || "68b58dde449b0c059a42ade1";
+  // const { data: agentData, isLoading, error } = useGetInstanceQuery(agentSchemaId);
+  
+  // Use mock data instead
   useEffect(() => {
-    if (agentData && Array.isArray(agentData)) {
-      // Map API data to match our interface
-      const processedAgents = agentData.map((agent: any) => ({
-        id: agent.id || `agent-${Math.random().toString(36).substr(2, 9)}`,
-        name: agent.name || 'Unnamed Agent',
-        capability: agent.capability || 'No capability information',
-        status: agent.status || 'inactive',
-        type: agent.type || 'monitoring',
-        lastActivity: agent.lastActivity || new Date().toISOString(),
-        enabled: agent.enabled !== undefined ? agent.enabled : true,
-        version: agent.version || '1.0.0',
-        uptime: agent.uptime || 0,
-        metrics: agent.metrics || {},
-        recentActions: agent.recentActions || [],
-        configuration: agent.configuration || {},
-        dependencies: agent.dependencies || [],
-        resources: agent.resources || { cpu: 0, memory: 0, storage: 0 },
-        performance: agent.performance || { 
-          successRate: agent.metrics?.successRate || 0, 
-          avgResponseTime: agent.metrics?.avgResponseTime || '0ms', 
-          throughput: agent.metrics?.throughput || '0/s' 
-        },
-        alerts: agent.alerts || []
-      }));
+    // Simulate API delay
+    const loadMockData = async () => {
+      setLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      setAgents(processedAgents);
+      if (agentsData && agentsData.agents) {
+        // Map mock data to match our interface
+        const processedAgents = agentsData.agents.map((agent: any) => ({
+          id: agent.id || `agent-${Math.random().toString(36).substr(2, 9)}`,
+          name: agent.name || 'Unnamed Agent',
+          capability: agent.capability || 'No capability information',
+          status: agent.status || 'inactive',
+          type: agent.type || 'monitoring',
+          lastActivity: agent.lastActivity || new Date().toISOString(),
+          enabled: agent.enabled !== undefined ? agent.enabled : true,
+          version: agent.version || '1.0.0',
+          uptime: agent.uptime || 0,
+          metrics: agent.metrics || {},
+          recentActions: agent.recentActions || [],
+          configuration: agent.configuration || {},
+          dependencies: agent.dependencies || [],
+          resources: agent.resources || { cpu: 0, memory: 0, storage: 0 },
+          performance: agent.performance || { 
+            successRate: agent.metrics?.successRate || 0, 
+            avgResponseTime: agent.metrics?.avgResponseTime || '0ms', 
+            throughput: agent.metrics?.throughput || '0/s' 
+          },
+          alerts: agent.alerts || []
+        }));
+        
+        setAgents(processedAgents);
+      } else {
+        console.error('Error loading mock agents data');
+      }
       setLoading(false);
-    } else if (error) {
-      console.error('Error loading agents data:', error);
-      setLoading(false);
-    }
-  }, [agentData, error]);
+    };
+    
+    loadMockData();
+  }, []);
 
   // Keep loading state in sync with query loading state
-  useEffect(() => {
-    setLoading(isLoading);
-  }, [isLoading]);
+  // useEffect(() => {
+  //   setLoading(isLoading);
+  // }, [isLoading]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -177,11 +187,13 @@ export function Agents() {
     ));
   };
 
+  /* Not currently used, but keeping for future implementation
   const getResourceColor = (usage: number) => {
     if (usage >= 80) return 'bg-red-500';
     if (usage >= 60) return 'bg-amber-500';
     return 'bg-green-500';
   };
+  */
 
   if (loading) {
     return (

@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { mockApi } from '../utils/mockApi';
-import { useGetInstanceQuery } from '../api/query';
 
 // Define user roles
 export type UserRole = 'admin' | 'user' | 'guest';
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
-          // Verify the user still exists in our system
+          // Verify the user still exists in our system using mockApi
           const verifiedUser = await mockApi.getUserById(parsedUser.id);
           
           if (verifiedUser) {
@@ -103,8 +102,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(true);
     try {
       // In a real app, you'd make an API call to validate credentials
-      // For this mock implementation, we'll just fetch users and find one with matching email
-      const { data: users } = useGetInstanceQuery(import.meta.env.VITE_USERS);
+      // For this implementation, we'll use mockApi
+      const users = await mockApi.getUsers();
       const matchedUser = users?.find((u: { email: string; }) => u.email.toLowerCase() === email.toLowerCase());
       
       // Simulate password validation (in a real app, you'd hash and compare)

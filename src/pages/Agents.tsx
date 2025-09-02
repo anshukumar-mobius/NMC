@@ -18,7 +18,7 @@ import {
   XCircleIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline';
-import { getJoinInstance } from '../api/axios';
+import {useGetInstanceQuery} from "../api/query";
 
 interface Agent {
   id: string;
@@ -29,26 +29,26 @@ interface Agent {
   lastActivity: string;
   enabled: boolean;
   version: string;
-  uptime: number;
-  metrics: {
+  uptime?: number;
+  metrics?: {
     [key: string]: string | number;
   };
-  recentActions: string[];
-  configuration: {
+  recentActions?: string[];
+  configuration?: {
     [key: string]: any;
   };
-  dependencies: string[];
-  resources: {
+  dependencies?: string[];
+  resources?: {
     cpu: number;
     memory: number;
     storage: number;
   };
-  performance: {
+  performance?: {
     successRate: number;
     avgResponseTime: string;
     throughput: string;
   };
-  alerts: Array<{
+  alerts?: Array<{
     level: 'info' | 'warning' | 'error';
     message: string;
     timestamp: string;
@@ -61,364 +61,47 @@ export function Agents() {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [showConfigModal, setShowConfigModal] = useState(false);
 
-  // Mock agents data
-  const mockAgents: Agent[] = [
-  {
-    "id": "sentinel",
-    "name": "Sentinel",
-    "capability": "Real-time patient monitoring and early warning detection",
-    "status": "active",
-    "type": "monitoring",
-    "lastActivity": "2024-01-20T08:45:00Z",
-    "enabled": true,
-    "version": "2.1.3",
-    "uptime": 99.7,
-    "metrics": {
-      "alertsTriggered": 47,
-      "accuracy": 94.2,
-      "responseTime": "1.2s",
-      "patientsMonitored": 156
-    },
-    "recentActions": [
-      "Detected sepsis risk in patient P0045 - Alert sent to ICU team",
-      "Alerted nursing staff about medication due for patient P0023",
-      "Identified potential drug interaction for patient P0067",
-      "Triggered early warning for deteriorating vitals in patient P0089",
-      "Recommended care escalation for patient P0012"
-    ],
-    "configuration": {
-      "monitoringInterval": 30,
-      "alertThreshold": 0.8,
-      "enabledAlerts": ["sepsis", "deterioration", "medication"],
-      "escalationDelay": 300,
-      "maxConcurrentPatients": 200
-    },
-    "dependencies": ["EMR System", "Vital Signs Monitor", "Lab System"],
-    "resources": {
-      "cpu": 45,
-      "memory": 62,
-      "storage": 23
-    },
-    "performance": {
-      "successRate": 94.2,
-      "avgResponseTime": "1.2s",
-      "throughput": "150 alerts/hour"
-    },
-    "alerts": [
-      {
-        "level": "info",
-        "message": "Successfully processed 47 alerts in the last hour",
-        "timestamp": "2024-01-20T08:45:00Z"
-      },
-      {
-        "level": "warning",
-        "message": "High CPU usage detected - consider scaling",
-        "timestamp": "2024-01-20T07:30:00Z"
-      }
-    ]
-  },
-  {
-    "id": "navigator",
-    "name": "Navigator",
-    "capability": "Comparative KPI exploration and physician benchmarking",
-    "status": "active",
-    "type": "analytics",
-    "lastActivity": "2024-01-20T10:05:00Z",
-    "enabled": true,
-    "version": "3.0.1",
-    "uptime": 98.9,
-    "metrics": {
-      "benchmarksGenerated": 32,
-      "accuracy": 92.5,
-      "avgQueryResponse": "2.5s",
-      "departmentsAnalyzed": 12
-    },
-    "recentActions": [
-      "Generated KPI variation index for Cardiology vs. Neurology",
-      "Identified protocol adherence gaps in Orthopedics",
-      "Highlighted antibiotic stewardship deviations for Dr. Smith",
-      "Created specialty composite score for Pediatrics",
-      "Visualized ALOS benchmark comparison across 3 hospitals"
-    ],
-    "configuration": {
-      "defaultFilters": ["specialty", "physician"],
-      "enableHeatmaps": true,
-      "benchmarkThreshold": 0.85,
-      "roleAdaptiveUX": true
-    },
-    "dependencies": ["EMR Data Warehouse", "KPI Graph Model", "Visualization Engine"],
-    "resources": {
-      "cpu": 38,
-      "memory": 55,
-      "storage": 18
-    },
-    "performance": {
-      "successRate": 92.5,
-      "avgResponseTime": "2.5s",
-      "throughput": "100 benchmarks/hour"
-    },
-    "alerts": [
-      {
-        "level": "info",
-        "message": "32 new benchmark analyses generated in last 24h",
-        "timestamp": "2024-01-20T09:50:00Z"
-      }
-    ]
-  },
-  {
-    "id": "aegis",
-    "name": "Aegis",
-    "capability": "Automated clinical escalation and governance enforcement",
-    "status": "active",
-    "type": "governance",
-    "lastActivity": "2024-01-20T09:15:00Z",
-    "enabled": true,
-    "version": "1.9.8",
-    "uptime": 99.3,
-    "metrics": {
-      "escalationsTriggered": 24,
-      "escalationSuccessRate": 88.7,
-      "avgTimeToEscalation": "3.4h",
-      "rolesEngaged": 15
-    },
-    "recentActions": [
-      "Escalated ICU sepsis cluster to CMO and Quality Director",
-      "Suppressed duplicate medication error alerts",
-      "Triggered escalation tree for Surgical Site Infections",
-      "Routed multiple unresolved ICU alerts to governance board",
-      "Logged escalation resolution turnaround for Neurology unit"
-    ],
-    "configuration": {
-      "escalationRules": ["persist > 4h", "multi-patient > 2"],
-      "maxEscalationDepth": 3,
-      "notifyRoles": ["CMO", "Quality Lead", "Unit Director"]
-    },
-    "dependencies": ["Sentinel", "Org Policy Graph", "Notification System"],
-    "resources": {
-      "cpu": 41,
-      "memory": 59,
-      "storage": 26
-    },
-    "performance": {
-      "successRate": 88.7,
-      "avgResponseTime": "3.4h",
-      "throughput": "50 escalations/day"
-    },
-    "alerts": [
-      {
-        "level": "warning",
-        "message": "3 unresolved escalations pending over 24h",
-        "timestamp": "2024-01-20T09:00:00Z"
-      }
-    ]
-  },
-  {
-    "id": "archivist",
-    "name": "Archivist",
-    "capability": "Immutable audit trail for all alerts, overrides, and actions",
-    "status": "active",
-    "type": "compliance",
-    "lastActivity": "2024-01-20T07:55:00Z",
-    "enabled": true,
-    "version": "2.4.0",
-    "uptime": 99.9,
-    "metrics": {
-      "auditLogsCaptured": 231,
-      "overrideEvents": 42,
-      "avgRetrievalTime": "1.5s",
-      "usersTracked": 84
-    },
-    "recentActions": [
-      "Recorded override of sepsis alert by Dr. Patel",
-      "Logged ICU threshold update to 0.75 sensitivity",
-      "Captured decision trail for antibiotic stewardship alert",
-      "Flagged repeated overrides for same patient in Pediatrics",
-      "Generated audit report for JCI compliance"
-    ],
-    "configuration": {
-      "logRetentionDays": 365,
-      "immutableLedger": true,
-      "enableAuditSearch": true,
-      "overrideAlerting": true
-    },
-    "dependencies": ["Sentinel", "Aegis", "Governance Ledger"],
-    "resources": {
-      "cpu": 27,
-      "memory": 43,
-      "storage": 71
-    },
-    "performance": {
-      "successRate": 99.9,
-      "avgResponseTime": "1.5s",
-      "throughput": "300 logs/hour"
-    },
-    "alerts": [
-      {
-        "level": "info",
-        "message": "231 audit events successfully recorded in last 24h",
-        "timestamp": "2024-01-20T07:50:00Z"
-      }
-    ]
-  },
-  {
-    "id": "synthesizer",
-    "name": "Synthesizer",
-    "capability": "Outcome attribution and ROI calculation of interventions",
-    "status": "active",
-    "type": "analytics",
-    "lastActivity": "2024-01-20T11:20:00Z",
-    "enabled": true,
-    "version": "1.6.5",
-    "uptime": 98.5,
-    "metrics": {
-      "interventionsLogged": 18,
-      "roiReportsGenerated": 11,
-      "accuracy": 90.8,
-      "avgAnalysisTime": "3.8s"
-    },
-    "recentActions": [
-      "Correlated discharge planning with reduced readmission rate",
-      "Generated ROI report for antibiotic stewardship initiative",
-      "Highlighted high-ROI intervention in Cardiology",
-      "Flagged unsuccessful hand hygiene campaign impact",
-      "Summarized financial savings from improved LOS metrics"
-    ],
-    "configuration": {
-      "impactWindowDays": 90,
-      "statConfidenceThreshold": 0.9,
-      "enableROIHeatmap": true
-    },
-    "dependencies": ["Navigator", "KPI Graph", "Financial DB"],
-    "resources": {
-      "cpu": 33,
-      "memory": 51,
-      "storage": 39
-    },
-    "performance": {
-      "successRate": 90.8,
-      "avgResponseTime": "3.8s",
-      "throughput": "60 analyses/day"
-    },
-    "alerts": [
-      {
-        "level": "info",
-        "message": "ROI attribution completed for 5 interventions yesterday",
-        "timestamp": "2024-01-20T11:10:00Z"
-      }
-    ]
-  },
-  {
-    "id": "configurator",
-    "name": "Configurator",
-    "capability": "Low-code KPI threshold and escalation rule configuration",
-    "status": "active",
-    "type": "governance",
-    "lastActivity": "2024-01-20T06:30:00Z",
-    "enabled": true,
-    "version": "2.0.2",
-    "uptime": 97.8,
-    "metrics": {
-      "rulesConfigured": 14,
-      "misconfigurationsDetected": 2,
-      "avgConfigSaveTime": "1.1s",
-      "usersActive": 9
-    },
-    "recentActions": [
-      "Set ICU medication error threshold to 0.8%",
-      "Validated conflicting escalation rules across Pediatrics and ICU",
-      "Logged KPI ownership mapping for Cardiology",
-      "Rolled back sepsis threshold update due to misconfiguration",
-      "Simulated impact of ALOS KPI adjustment"
-    ],
-    "configuration": {
-      "enableLowCodeUI": true,
-      "schemaValidation": true,
-      "defaultAuditLogging": true,
-      "rollbackEnabled": true
-    },
-    "dependencies": ["Governance DB", "Alert System", "Archivist"],
-    "resources": {
-      "cpu": 29,
-      "memory": 46,
-      "storage": 22
-    },
-    "performance": {
-      "successRate": 97.8,
-      "avgResponseTime": "1.1s",
-      "throughput": "40 rule updates/day"
-    },
-    "alerts": [
-      {
-        "level": "warning",
-        "message": "2 misconfigured rules detected during validation",
-        "timestamp": "2024-01-20T06:15:00Z"
-      }
-    ]
-  },
-  {
-    "id": "companion",
-    "name": "Companion",
-    "capability": "Patient-specific KPI insight and conversational assistance",
-    "status": "active",
-    "type": "assistant",
-    "lastActivity": "2024-01-20T12:10:00Z",
-    "enabled": true,
-    "version": "1.4.7",
-    "uptime": 96.9,
-    "metrics": {
-      "patientAlertsServed": 73,
-      "avgQueryTime": "1.9s",
-      "contextAccuracy": 91.3,
-      "activeUsers": 27
-    },
-    "recentActions": [
-      "Explained ICU deterioration alert for patient P0034 to Dr. Khan",
-      "Provided discharge readiness assessment for patient P0060",
-      "Summarized alert history for Mr. Ahmed’s ICU stay",
-      "Forecasted sepsis escalation risk for patient P0072",
-      "Presented override commentary summary for patient P0051"
-    ],
-    "configuration": {
-      "contextWindowDays": 30,
-      "conversationMode": "clinical-explainer",
-      "feedbackLearning": true
-    },
-    "dependencies": ["EMR", "LLM Engine", "Sentinel"],
-    "resources": {
-      "cpu": 52,
-      "memory": 68,
-      "storage": 31
-    },
-    "performance": {
-      "successRate": 91.3,
-      "avgResponseTime": "1.9s",
-      "throughput": "80 patient sessions/day"
-    },
-    "alerts": [
-      {
-        "level": "info",
-        "message": "73 patient alert explanations completed in last 24h",
-        "timestamp": "2024-01-20T12:05:00Z"
-      }
-    ]
-  }
-];
-
+  // Get agents data using React Query
+  const agentSchemaId = import.meta.env.VITE_AGENTS || "68b58dde449b0c059a42ade1";
+  const { data: agentData, isLoading, error } = useGetInstanceQuery(agentSchemaId);
   useEffect(() => {
-    const loadAgents = async () => {
-      try {
-        // Simulate API call
-        setTimeout(() => {
-          setAgents(mockAgents);
-          setLoading(false);
-        }, 800);
-      } catch (error) {
-        console.error('Error loading agents:', error);
-        setLoading(false);
-      }
-    };
-    loadAgents();
-  }, []);
+    if (agentData && Array.isArray(agentData)) {
+      // Map API data to match our interface
+      const processedAgents = agentData.map((agent: any) => ({
+        id: agent.id || `agent-${Math.random().toString(36).substr(2, 9)}`,
+        name: agent.name || 'Unnamed Agent',
+        capability: agent.capability || 'No capability information',
+        status: agent.status || 'inactive',
+        type: agent.type || 'monitoring',
+        lastActivity: agent.lastActivity || new Date().toISOString(),
+        enabled: agent.enabled !== undefined ? agent.enabled : true,
+        version: agent.version || '1.0.0',
+        uptime: agent.uptime || 0,
+        metrics: agent.metrics || {},
+        recentActions: agent.recentActions || [],
+        configuration: agent.configuration || {},
+        dependencies: agent.dependencies || [],
+        resources: agent.resources || { cpu: 0, memory: 0, storage: 0 },
+        performance: agent.performance || { 
+          successRate: agent.metrics?.successRate || 0, 
+          avgResponseTime: agent.metrics?.avgResponseTime || '0ms', 
+          throughput: agent.metrics?.throughput || '0/s' 
+        },
+        alerts: agent.alerts || []
+      }));
+      
+      setAgents(processedAgents);
+      setLoading(false);
+    } else if (error) {
+      console.error('Error loading agents data:', error);
+      setLoading(false);
+    }
+  }, [agentData, error]);
+
+  // Keep loading state in sync with query loading state
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -515,9 +198,6 @@ export function Agents() {
     );
   }
 
-  getJoinInstance("68b5777a449b0c059a42adce").then(data => {
-    console.log('Agents data:', data);
-  });
 
   return (
     <div className="p-8">
@@ -559,7 +239,7 @@ export function Agents() {
             <div>
               <p className="text-sm text-slate-500">Avg Uptime</p>
               <p className="text-3xl font-bold text-blue-600">
-                {(agents.reduce((sum, agent) => sum + agent.uptime, 0) / agents.length).toFixed(1)}%
+                {(agents.reduce((sum, agent) => sum + (agent.uptime || 0), 0) / agents.length).toFixed(1)}%
               </p>
             </div>
             <SignalIcon className="h-8 w-8 text-blue-500" />
@@ -627,11 +307,11 @@ export function Agents() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Dependencies:</span>
-                  <span className="font-medium text-slate-900">{agent.dependencies.length}</span>
+                  <span className="font-medium text-slate-900">{agent.dependencies?.length || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Uptime:</span>
-                  <span className="font-medium text-slate-900">{agent.uptime}%</span>
+                  <span className="font-medium text-slate-900">{agent.uptime || 0}%</span>
                 </div>
               </div>
             </div>
@@ -640,20 +320,20 @@ export function Agents() {
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="text-center p-3 bg-blue-50 rounded-lg">
                 <div className="text-xl font-bold text-blue-700">
-                  {agent.performance.successRate}%
+                  {agent.performance?.successRate || 0}%
                 </div>
                 <div className="text-xs text-slate-600">Success Rate</div>
               </div>
               <div className="text-center p-3 bg-green-50 rounded-lg">
                 <div className="text-xl font-bold text-green-700">
-                  {agent.performance.avgResponseTime}
+                  {agent.performance?.avgResponseTime || '0ms'}
                 </div>
                 <div className="text-xs text-slate-600">Response Time</div>
               </div>
             </div>
 
             {/* Latest Alert - Show only the most recent one if it exists */}
-            {agent.alerts.length > 0 && (
+            {agent.alerts && agent.alerts.length > 0 && (
               <div className="mb-4">
                 <h5 className="text-sm font-medium text-slate-900 mb-2">Latest Alert</h5>
                 <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
@@ -665,8 +345,8 @@ export function Agents() {
                    agent.alerts[0].level === 'warning' ? <ExclamationTriangleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" /> :
                    <InformationCircleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />}
                   <div>
-                    <span className="flex-1 font-medium">{agent.alerts[0].message}</span>
-                    <div className="text-xs mt-1 opacity-75">{new Date(agent.alerts[0].timestamp).toLocaleString()}</div>
+                    <span className="flex-1 font-medium">{agent.alerts[0].message || 'No details available'}</span>
+                    <div className="text-xs mt-1 opacity-75">{agent.alerts[0].timestamp ? new Date(agent.alerts[0].timestamp).toLocaleString() : 'Unknown time'}</div>
                   </div>
                 </div>
               </div>
@@ -761,7 +441,7 @@ export function Agents() {
                 <div className="bg-blue-50 rounded-lg p-4">
                   <h4 className="font-medium text-slate-900 mb-3">Performance Metrics</h4>
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.entries(selectedAgent.metrics).map(([key, value]) => (
+                    {selectedAgent.metrics && Object.entries(selectedAgent.metrics).map(([key, value]) => (
                       <div key={key} className="text-center">
                         <div className="text-lg font-bold text-slate-900">{value}</div>
                         <div className="text-xs text-slate-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
@@ -773,7 +453,7 @@ export function Agents() {
                 <div className="bg-green-50 rounded-lg p-4">
                   <h4 className="font-medium text-slate-900 mb-3">Dependencies</h4>
                   <div className="space-y-2">
-                    {selectedAgent.dependencies.map((dep, idx) => (
+                    {selectedAgent.dependencies && selectedAgent.dependencies.map((dep, idx) => (
                       <div key={idx} className="flex items-center gap-2">
                         <CheckCircleIcon className="h-4 w-4 text-green-500" />
                         <span className="text-sm text-slate-700">{dep}</span>
@@ -788,7 +468,7 @@ export function Agents() {
                 <div className="bg-purple-50 rounded-lg p-4">
                   <h4 className="font-medium text-slate-900 mb-3">Recent Actions</h4>
                   <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {selectedAgent.recentActions.map((action, idx) => (
+                    {selectedAgent.recentActions && selectedAgent.recentActions.map((action, idx) => (
                       <div key={idx} className="text-sm text-slate-700 p-2 bg-white rounded">
                         {action}
                       </div>
@@ -799,7 +479,7 @@ export function Agents() {
                 <div className="bg-amber-50 rounded-lg p-4">
                   <h4 className="font-medium text-slate-900 mb-3">System Alerts</h4>
                   <div className="space-y-2">
-                    {selectedAgent.alerts.map((alert, idx) => (
+                    {selectedAgent.alerts && selectedAgent.alerts.map((alert, idx) => (
                       <div key={idx} className={`p-3 rounded-lg ${
                         alert.level === 'error' ? 'bg-red-100 border border-red-200' :
                         alert.level === 'warning' ? 'bg-amber-100 border border-amber-200' :
@@ -863,7 +543,7 @@ export function Agents() {
               <div className="bg-slate-50 rounded-lg p-4">
                 <h4 className="font-medium text-slate-900 mb-3">Configuration Parameters</h4>
                 <div className="space-y-3">
-                  {Object.entries(selectedAgent.configuration).map(([key, value]) => (
+                  {selectedAgent.configuration && Object.entries(selectedAgent.configuration).map(([key, value]) => (
                     <div key={key} className="flex items-center justify-between">
                       <label className="text-sm font-medium text-slate-700 capitalize">
                         {key.replace(/([A-Z])/g, ' $1').trim()}:

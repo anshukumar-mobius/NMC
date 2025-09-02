@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { mockApi } from '../utils/mockApi';
 import {
   ShieldCheckIcon,
   ExclamationTriangleIcon,
@@ -13,7 +12,6 @@ import {
   ChartBarIcon,
   UserIcon,
   CalendarDaysIcon,
-  ArrowRightIcon,
   InformationCircleIcon,
   LightBulbIcon,
   CpuChipIcon,
@@ -22,6 +20,8 @@ import {
   HandRaisedIcon,
   ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
+import { useGetInstanceQuery } from '../api/query';
+import { getInstance } from '../api/axios';
 
 interface Alert {
   id: string;
@@ -79,349 +79,21 @@ export function CDS() {
   const [showExplainModal, setShowExplainModal] = useState(false);
 
   // Mock alerts data
-  const mockAlerts: Alert[] = [
-    {
-      id: 'CDS001',
-      ruleId: 'R001',
-      patientId: patientId || 'P0001',
-      severity: 'critical',
-      category: 'medication_safety',
-      title: 'Critical Drug Interaction Detected',
-      message: 'Dangerous interaction between Warfarin and Aspirin detected',
-      recommendation: 'Consider alternative antiplatelet therapy or adjust Warfarin dosing with increased INR monitoring',
-      evidence: [
-        'Both medications increase bleeding risk',
-        'Patient has history of GI bleeding',
-        'Current INR: 2.8 (therapeutic range: 2.0-3.0)'
-      ],
-      timestamp: '2024-01-20T10:15:00Z',
-      status: 'active',
-      priority: 1,
-      source: 'Medication Safety Engine',
-      relatedData: {
-        medications: ['Warfarin 5mg daily', 'Aspirin 81mg daily'],
-        labValues: [
-          { name: 'INR', value: '2.8', unit: '', status: 'therapeutic' },
-          { name: 'Hemoglobin', value: '11.2', unit: 'g/dL', status: 'low' }
-        ]
-      }
-    },
-    {
-      id: 'CDS002',
-      ruleId: 'R002',
-      patientId: patientId || 'P0001',
-      severity: 'high',
-      category: 'clinical_deterioration',
-      title: 'Early Sepsis Warning',
-      message: 'Patient shows early signs of sepsis based on vital signs and lab values',
-      recommendation: 'Initiate sepsis bundle: blood cultures, lactate level, broad-spectrum antibiotics within 1 hour',
-      evidence: [
-        'Temperature: 38.2°C (fever)',
-        'Heart rate: 105 bpm (tachycardia)',
-        'WBC: 15,000 (elevated)',
-        'Lactate: 2.8 mmol/L (elevated)'
-      ],
-      timestamp: '2024-01-20T09:45:00Z',
-      status: 'active',
-      priority: 2,
-      source: 'Sentinel AI Agent',
-      relatedData: {
-        vitals: [
-          { name: 'Temperature', value: '38.2°C', status: 'high' },
-          { name: 'Heart Rate', value: '105 bpm', status: 'high' },
-          { name: 'Blood Pressure', value: '95/60 mmHg', status: 'low' }
-        ],
-        labValues: [
-          { name: 'WBC', value: '15,000', unit: '/μL', status: 'high' },
-          { name: 'Lactate', value: '2.8', unit: 'mmol/L', status: 'high' }
-        ]
-      }
-    },
-    {
-      id: 'CDS003',
-      ruleId: 'R003',
-      patientId: patientId || 'P0001',
-      severity: 'medium',
-      category: 'chronic_disease',
-      title: 'Diabetes Management Alert',
-      message: 'HbA1c indicates suboptimal diabetes control',
-      recommendation: 'Consider intensifying diabetes therapy or diabetes education referral',
-      evidence: [
-        'HbA1c: 8.2% (target <7.0%)',
-        'Last HbA1c 3 months ago: 7.8%',
-        'Current medication: Metformin 500mg BID'
-      ],
-      timestamp: '2024-01-20T08:30:00Z',
-      status: 'active',
-      priority: 3,
-      source: 'Chronic Disease Management',
-      relatedData: {
-        medications: ['Metformin 500mg BID'],
-        labValues: [
-          { name: 'HbA1c', value: '8.2', unit: '%', status: 'high' },
-          { name: 'Glucose', value: '180', unit: 'mg/dL', status: 'high' }
-        ],
-        conditions: ['Type 2 Diabetes Mellitus']
-      }
-    },
-    {
-      id: 'CDS004',
-      ruleId: 'R004',
-      patientId: patientId || 'P0001',
-      severity: 'low',
-      category: 'imaging_safety',
-      title: 'Contrast Allergy Verification',
-      message: 'Patient scheduled for CT with contrast - verify allergy status',
-      recommendation: 'Confirm no contrast allergies before proceeding with imaging study',
-      evidence: [
-        'CT Abdomen with contrast ordered',
-        'No documented contrast allergy history',
-        'Patient has shellfish allergy (cross-reactivity possible)'
-      ],
-      timestamp: '2024-01-20T07:15:00Z',
-      status: 'acknowledged',
-      acknowledgedBy: 'Dr. Ahmed Al-Rashid',
-      acknowledgedAt: '2024-01-20T07:20:00Z',
-      priority: 4,
-      source: 'Imaging Safety System',
-      relatedData: {
-        conditions: ['Shellfish allergy']
-      }
-    },
-    {
-      id: 'CDS005',
-      ruleId: 'R005',
-      patientId: patientId || 'P0001',
-      severity: 'critical',
-      category: 'medication_safety',
-      title: 'Renal Dosing Alert',
-      message: 'Medication requires dose adjustment for renal impairment',
-      recommendation: 'Reduce Metformin dose by 50% or consider alternative. Monitor renal function closely.',
-      evidence: [
-        'eGFR: 35 mL/min/1.73m² (moderate renal impairment)',
-        'Creatinine: 2.1 mg/dL (elevated)',
-        'Current Metformin dose: 1000mg BID (contraindicated)',
-        'Risk of lactic acidosis increased'
-      ],
-      timestamp: '2024-01-20T11:30:00Z',
-      status: 'active',
-      priority: 1,
-      source: 'Renal Dosing Engine',
-      relatedData: {
-        medications: ['Metformin 1000mg BID'],
-        labValues: [
-          { name: 'eGFR', value: '35', unit: 'mL/min/1.73m²', status: 'low' },
-          { name: 'Creatinine', value: '2.1', unit: 'mg/dL', status: 'high' },
-          { name: 'BUN', value: '45', unit: 'mg/dL', status: 'high' }
-        ],
-        conditions: ['Chronic Kidney Disease Stage 3']
-      }
-    },
-    {
-      id: 'CDS006',
-      ruleId: 'R006',
-      patientId: patientId || 'P0001',
-      severity: 'high',
-      category: 'clinical_deterioration',
-      title: 'Acute Kidney Injury Warning',
-      message: 'Rapid decline in kidney function detected',
-      recommendation: 'Discontinue nephrotoxic medications, ensure adequate hydration, consider nephrology consult',
-      evidence: [
-        'Creatinine increased from 1.2 to 2.1 mg/dL in 48 hours',
-        'Urine output: 0.3 mL/kg/hr (oliguria)',
-        'Patient on ACE inhibitor and NSAID',
-        'Recent contrast exposure 72 hours ago'
-      ],
-      timestamp: '2024-01-20T09:00:00Z',
-      status: 'active',
-      priority: 2,
-      source: 'Nephrology AI Agent',
-      relatedData: {
-        medications: ['Lisinopril 10mg daily', 'Ibuprofen 600mg TID'],
-        labValues: [
-          { name: 'Creatinine (baseline)', value: '1.2', unit: 'mg/dL', status: 'normal' },
-          { name: 'Creatinine (current)', value: '2.1', unit: 'mg/dL', status: 'high' },
-          { name: 'Urine Output', value: '0.3', unit: 'mL/kg/hr', status: 'low' }
-        ],
-        conditions: ['Acute Kidney Injury']
-      }
-    },
-    {
-      id: 'CDS007',
-      ruleId: 'R007',
-      patientId: patientId || 'P0001',
-      severity: 'medium',
-      category: 'lab_values',
-      title: 'Hypokalemia Alert',
-      message: 'Dangerously low potassium level detected',
-      recommendation: 'Administer potassium supplementation and monitor cardiac rhythm. Recheck K+ in 4-6 hours.',
-      evidence: [
-        'Potassium: 2.8 mEq/L (critical low)',
-        'Patient on furosemide therapy',
-        'ECG shows U waves and flattened T waves',
-        'Risk of cardiac arrhythmias'
-      ],
-      timestamp: '2024-01-20T08:45:00Z',
-      status: 'active',
-      priority: 3,
-      source: 'Laboratory Critical Values',
-      relatedData: {
-        medications: ['Furosemide 40mg BID'],
-        labValues: [
-          { name: 'Potassium', value: '2.8', unit: 'mEq/L', status: 'critical_low' },
-          { name: 'Magnesium', value: '1.4', unit: 'mg/dL', status: 'low' },
-          { name: 'Creatinine', value: '1.8', unit: 'mg/dL', status: 'high' }
-        ],
-        vitals: [
-          { name: 'ECG', value: 'U waves present', status: 'abnormal' }
-        ]
-      }
-    },
-    {
-      id: 'CDS008',
-      ruleId: 'R008',
-      patientId: patientId || 'P0001',
-      severity: 'high',
-      category: 'medication_safety',
-      title: 'QT Prolongation Risk',
-      message: 'Multiple QT-prolonging medications prescribed',
-      recommendation: 'Consider alternative medications or increase cardiac monitoring. Obtain baseline and follow-up ECGs.',
-      evidence: [
-        'Azithromycin + Ondansetron combination',
-        'Baseline QTc: 445 ms (borderline)',
-        'Patient has electrolyte imbalances',
-        'Female gender (increased risk)'
-      ],
-      timestamp: '2024-01-20T07:30:00Z',
-      status: 'active',
-      priority: 2,
-      source: 'Cardiotoxicity Monitor',
-      relatedData: {
-        medications: ['Azithromycin 500mg daily', 'Ondansetron 4mg q6h PRN'],
-        labValues: [
-          { name: 'QTc Interval', value: '445', unit: 'ms', status: 'borderline' },
-          { name: 'Potassium', value: '3.2', unit: 'mEq/L', status: 'low' },
-          { name: 'Magnesium', value: '1.6', unit: 'mg/dL', status: 'low' }
-        ]
-      }
-    },
-    {
-      id: 'CDS009',
-      ruleId: 'R009',
-      patientId: patientId || 'P0001',
-      severity: 'medium',
-      category: 'chronic_disease',
-      title: 'Hypertension Management',
-      message: 'Blood pressure not at goal despite current therapy',
-      recommendation: 'Consider adding ACE inhibitor or increasing current dose. Lifestyle counseling recommended.',
-      evidence: [
-        'Average BP: 155/92 mmHg (goal <140/90)',
-        'Current on single agent therapy',
-        'No contraindications to ACE inhibitors',
-        'Patient has diabetes (goal <130/80)'
-      ],
-      timestamp: '2024-01-20T06:15:00Z',
-      status: 'acknowledged',
-      acknowledgedBy: 'Dr. Sarah Thompson',
-      acknowledgedAt: '2024-01-20T06:20:00Z',
-      priority: 3,
-      source: 'Hypertension Management Protocol',
-      relatedData: {
-        medications: ['Amlodipine 5mg daily'],
-        vitals: [
-          { name: 'Systolic BP', value: '155', status: 'high' },
-          { name: 'Diastolic BP', value: '92', status: 'high' }
-        ],
-        conditions: ['Essential Hypertension', 'Type 2 Diabetes']
-      }
-    },
-    {
-      id: 'CDS010',
-      ruleId: 'R010',
-      patientId: patientId || 'P0001',
-      severity: 'low',
-      category: 'preventive_care',
-      title: 'Vaccination Due',
-      message: 'Annual influenza vaccination overdue',
-      recommendation: 'Administer influenza vaccine unless contraindicated. Document in immunization record.',
-      evidence: [
-        'Last flu vaccine: October 2022',
-        'Current flu season: 2023-2024',
-        'Patient >65 years old (high risk)',
-        'No documented vaccine allergies'
-      ],
-      timestamp: '2024-01-20T05:00:00Z',
-      status: 'active',
-      priority: 4,
-      source: 'Preventive Care Reminders',
-      relatedData: {
-        conditions: ['Age >65', 'Diabetes', 'Hypertension']
-      }
-    },
-    {
-      id: 'CDS011',
-      ruleId: 'R011',
-      patientId: patientId || 'P0001',
-      severity: 'high',
-      category: 'medication_safety',
-      title: 'Anticoagulation Monitoring',
-      message: 'INR critically elevated - bleeding risk',
-      recommendation: 'Hold Warfarin, consider Vitamin K reversal, monitor for bleeding signs, recheck INR in 6 hours',
-      evidence: [
-        'INR: 4.8 (therapeutic range: 2.0-3.0)',
-        'Patient reports minor gum bleeding',
-        'Recent antibiotic course (drug interaction)',
-        'Age >75 years (increased bleeding risk)'
-      ],
-      timestamp: '2024-01-20T11:45:00Z',
-      status: 'active',
-      priority: 2,
-      source: 'Anticoagulation Clinic',
-      relatedData: {
-        medications: ['Warfarin 5mg daily', 'Azithromycin 500mg daily'],
-        labValues: [
-          { name: 'INR', value: '4.8', unit: '', status: 'critical_high' },
-          { name: 'PT', value: '48', unit: 'seconds', status: 'high' },
-          { name: 'Hemoglobin', value: '10.8', unit: 'g/dL', status: 'low' }
-        ]
-      }
-    },
-    {
-      id: 'CDS012',
-      ruleId: 'R012',
-      patientId: patientId || 'P0001',
-      severity: 'medium',
-      category: 'clinical_deterioration',
-      title: 'Delirium Risk Assessment',
-      message: 'High risk factors for delirium identified',
-      recommendation: 'Implement delirium prevention bundle: minimize sedatives, early mobilization, sleep hygiene',
-      evidence: [
-        'Age >70 years',
-        'Multiple medications (polypharmacy)',
-        'Recent surgery/anesthesia',
-        'Electrolyte imbalances present'
-      ],
-      timestamp: '2024-01-20T04:30:00Z',
-      status: 'active',
-      priority: 3,
-      source: 'Geriatric Assessment Tool',
-      relatedData: {
-        medications: ['Lorazepam 0.5mg PRN', 'Diphenhydramine 25mg HS'],
-        conditions: ['Post-operative status', 'Hyponatremia']
-      }
-    }
-  ];
+
+  const AlertSchema = import.meta.env.VITE_ALERT_ID;
+  const PatientSchema = import.meta.env.VITE_PATIENT_ID;
+  const { data: Alerts } = useGetInstanceQuery(AlertSchema);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         if (patientId) {
-          const patientData = await mockApi.getPatientById(patientId);
+          const patientData = await getInstance(PatientSchema, patientId);
           setPatient(patientData);
         }
         // Simulate loading alerts
         setTimeout(() => {
-          setAlerts(mockAlerts);
+          setAlerts(Alerts || []);
           setLoading(false);
         }, 800);
       } catch (error) {
@@ -430,7 +102,7 @@ export function CDS() {
       }
     };
     loadData();
-  }, [patientId]);
+  }, [patientId, Alerts]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {

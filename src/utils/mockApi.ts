@@ -128,10 +128,10 @@ export const mockApi = {
   },
 
   // Agents API
-  async getAgents() {
-    await delay(400);
-    return agentsData.agents;
-  },
+  // async getAgents() {
+  //   await delay(400);
+  //   return agentsData.agents;
+  // },
 
   async toggleAgent(id: string) {
     await delay(200);

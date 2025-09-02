@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { mockApi } from '../utils/mockApi';
 import {
-  DocumentMagnifyingGlassIcon,
   BeakerIcon,
   EyeIcon,
   ClipboardDocumentCheckIcon,
@@ -11,19 +9,16 @@ import {
   XCircleIcon,
   InformationCircleIcon,
   UserIcon,
-  CalendarDaysIcon,
   ShieldCheckIcon,
-  HeartIcon,
   CpuChipIcon,
   ChartBarIcon,
   LightBulbIcon,
   DocumentTextIcon,
   MagnifyingGlassIcon,
-  PlusIcon,
-  MinusIcon,
   ClockIcon,
-  BellIcon
 } from '@heroicons/react/24/outline';
+import { getInstance } from '../api/axios';
+import { useGetInstanceQuery } from '../api/query';
 
 interface Patient {
   id: string;
@@ -107,308 +102,28 @@ export function Appropriateness() {
   const [clinicalFactors, setClinicalFactors] = useState<Record<string, string>>({});
   const [appropriatenessResult, setAppropriatenessResult] = useState<string | null>(null);
 
-  // Mock medication reviews
-  const medicationReviews: MedicationReview[] = [
-    {
-      id: 'MR001',
-      medication: 'Warfarin',
-      dosage: '5mg',
-      frequency: 'Daily',
-      route: 'Oral',
-      indication: 'Atrial Fibrillation',
-      prescriber: 'Dr. Ahmed Al-Rashid',
-      status: 'pending',
-      appropriatenessScore: 65,
-      issues: [
-        {
-          type: 'interaction',
-          severity: 'critical',
-          description: 'Dangerous interaction with concurrent Aspirin therapy',
-          recommendation: 'Consider alternative antiplatelet or adjust Warfarin dosing with increased monitoring'
-        },
-        {
-          type: 'dosing',
-          severity: 'medium',
-          description: 'Dose may be high for patient age (>75 years)',
-          recommendation: 'Consider reducing initial dose to 2.5mg daily'
-        }
-      ],
-      alternatives: [
-        {
-          medication: 'Apixaban 5mg BID',
-          rationale: 'Lower bleeding risk, no routine monitoring required',
-          costDifference: '+AED 180/month'
-        },
-        {
-          medication: 'Rivaroxaban 20mg daily',
-          rationale: 'Once daily dosing, predictable anticoagulation',
-          costDifference: '+AED 150/month'
-        }
-      ]
-    },
-    {
-      id: 'MR002',
-      medication: 'Metformin',
-      dosage: '1000mg',
-      frequency: 'BID',
-      route: 'Oral',
-      indication: 'Type 2 Diabetes',
-      prescriber: 'Dr. Ahmed Al-Rashid',
-      status: 'rejected',
-      appropriatenessScore: 25,
-      issues: [
-        {
-          type: 'contraindication',
-          severity: 'critical',
-          description: 'Contraindicated with eGFR <30 mL/min/1.73m²',
-          recommendation: 'Discontinue immediately. Consider insulin or DPP-4 inhibitor'
-        },
-        {
-          type: 'dosing',
-          severity: 'high',
-          description: 'Current dose inappropriate for renal function',
-          recommendation: 'If eGFR 30-45, maximum dose should be 1000mg daily'
-        }
-      ],
-      alternatives: [
-        {
-          medication: 'Sitagliptin 25mg daily',
-          rationale: 'Renal dose adjustment, safe in CKD',
-          costDifference: '+AED 120/month'
-        },
-        {
-          medication: 'Insulin glargine',
-          rationale: 'No renal contraindications, effective glucose control',
-          costDifference: '+AED 200/month'
-        }
-      ]
-    },
-    {
-      id: 'MR003',
-      medication: 'Lisinopril',
-      dosage: '10mg',
-      frequency: 'Daily',
-      route: 'Oral',
-      indication: 'Hypertension',
-      prescriber: 'Dr. Ahmed Al-Rashid',
-      status: 'approved',
-      appropriatenessScore: 90,
-      issues: [
-        {
-          type: 'dosing',
-          severity: 'low',
-          description: 'Monitor potassium levels closely',
-          recommendation: 'Check K+ in 1-2 weeks after initiation'
-        }
-      ]
-    },
-    {
-      id: 'MR004',
-      medication: 'Omeprazole',
-      dosage: '40mg',
-      frequency: 'Daily',
-      route: 'Oral',
-      indication: 'GERD',
-      prescriber: 'Dr. Sarah Thompson',
-      status: 'modified',
-      appropriatenessScore: 75,
-      issues: [
-        {
-          type: 'duplication',
-          severity: 'medium',
-          description: 'Patient already on H2 blocker (Ranitidine)',
-          recommendation: 'Discontinue Ranitidine or reduce PPI dose'
-        },
-        {
-          type: 'dosing',
-          severity: 'low',
-          description: 'High dose for maintenance therapy',
-          recommendation: 'Consider reducing to 20mg daily after 4-8 weeks'
-        }
-      ]
-    },
-    {
-      id: 'MR005',
-      medication: 'Atorvastatin',
-      dosage: '80mg',
-      frequency: 'Daily',
-      route: 'Oral',
-      indication: 'Hyperlipidemia',
-      prescriber: 'Dr. Ahmed Al-Rashid',
-      status: 'pending',
-      appropriatenessScore: 80,
-      issues: [
-        {
-          type: 'interaction',
-          severity: 'medium',
-          description: 'Potential interaction with Warfarin (increased bleeding risk)',
-          recommendation: 'Monitor INR more frequently'
-        },
-        {
-          type: 'formulary',
-          severity: 'low',
-          description: 'High-intensity statin - ensure clinical justification',
-          recommendation: 'Document cardiovascular risk assessment'
-        }
-      ]
-    }
-  ];
+  // Medication reviews
+const MedicationReviewsSchemaId = import.meta.env.VITE_MEDICATION_REVIEW_ID;
+const { data: medicationReviewsData } = useGetInstanceQuery(MedicationReviewsSchemaId);
+const medicationReviews = medicationReviewsData || [];
 
-  // Mock imaging guidelines
-  const imagingGuidelines: ImagingGuideline[] = [
-    {
-      id: 'IMG001',
-      name: 'Canadian CT Head Rule',
-      category: 'Neuroimaging',
-      description: 'Decision rule for CT head in minor head injury',
-      criteria: [
-        {
-          factor: 'Age',
-          required: true,
-          options: ['≥65 years', '<65 years']
-        },
-        {
-          factor: 'GCS Score',
-          required: true,
-          options: ['15', '14', '13', '<13']
-        },
-        {
-          factor: 'Vomiting',
-          required: false,
-          options: ['≥2 episodes', '1 episode', 'None']
-        },
-        {
-          factor: 'Amnesia',
-          required: false,
-          options: ['>30 minutes', '≤30 minutes', 'None']
-        },
-        {
-          factor: 'Dangerous Mechanism',
-          required: false,
-          options: ['Pedestrian struck', 'Fall from height', 'High-speed MVA', 'Other']
-        }
-      ],
-      recommendation: 'CT indicated if any high-risk factor present',
-      evidence: 'Sensitivity 100% for need for neurological intervention'
-    },
-    {
-      id: 'IMG002',
-      name: 'Pulmonary Embolism Rule-out Criteria (PERC)',
-      category: 'Chest Imaging',
-      description: 'Rule to exclude PE without further testing',
-      criteria: [
-        {
-          factor: 'Age',
-          required: true,
-          options: ['<50 years', '≥50 years']
-        },
-        {
-          factor: 'Heart Rate',
-          required: true,
-          options: ['<100 bpm', '≥100 bpm']
-        },
-        {
-          factor: 'O2 Saturation',
-          required: true,
-          options: ['≥95%', '<95%']
-        },
-        {
-          factor: 'Hemoptysis',
-          required: false,
-          options: ['Present', 'Absent']
-        },
-        {
-          factor: 'Estrogen Use',
-          required: false,
-          options: ['Yes', 'No']
-        },
-        {
-          factor: 'Prior DVT/PE',
-          required: false,
-          options: ['Yes', 'No']
-        }
-      ],
-      recommendation: 'If all PERC criteria negative, PE ruled out',
-      evidence: 'Negative predictive value >99% when pre-test probability <15%'
-    },
-    {
-      id: 'IMG003',
-      name: 'ACR Appropriateness Criteria - Acute Chest Pain',
-      category: 'Cardiac Imaging',
-      description: 'Imaging recommendations for acute chest pain',
-      criteria: [
-        {
-          factor: 'Chest Pain Type',
-          required: true,
-          options: ['Typical angina', 'Atypical angina', 'Non-cardiac']
-        },
-        {
-          factor: 'Risk Factors',
-          required: true,
-          options: ['High risk', 'Intermediate risk', 'Low risk']
-        },
-        {
-          factor: 'ECG Changes',
-          required: true,
-          options: ['ST elevation', 'ST depression', 'T-wave changes', 'Normal']
-        },
-        {
-          factor: 'Troponin',
-          required: true,
-          options: ['Elevated', 'Normal', 'Not done']
-        }
-      ],
-      recommendation: 'CT coronary angiography for intermediate risk with normal troponin',
-      evidence: 'High sensitivity and specificity for coronary artery disease'
-    }
-  ];
+// Imaging guidelines
+const ImagingGuidelinesSchemaId = import.meta.env.VITE_IMAGING_GUIDELINE_ID;
+const { data: imagingGuidelinesData } = useGetInstanceQuery(ImagingGuidelinesSchemaId);
+const imagingGuidelines = imagingGuidelinesData || [];
 
-  // Mock lab guidelines
-  const labGuidelines: LabGuideline[] = [
-    {
-      id: 'LAB001',
-      test: 'HbA1c',
-      category: 'Diabetes Monitoring',
-      indications: ['Diabetes diagnosis', 'Glycemic control monitoring', 'Pre-diabetes screening'],
-      contraindications: ['Hemoglobinopathies', 'Recent blood transfusion', 'Severe anemia'],
-      frequency: 'Every 3-6 months for diabetes, annually for pre-diabetes',
-      costEffectiveness: 'High - prevents long-term complications'
-    },
-    {
-      id: 'LAB002',
-      test: 'Lipid Panel',
-      category: 'Cardiovascular Risk',
-      indications: ['Cardiovascular risk assessment', 'Statin therapy monitoring', 'Family history of CAD'],
-      contraindications: ['Recent acute illness', 'Non-fasting state (for LDL calculation)'],
-      frequency: 'Every 5 years for low risk, annually for high risk',
-      costEffectiveness: 'High - guides preventive therapy'
-    },
-    {
-      id: 'LAB003',
-      test: 'Thyroid Function (TSH)',
-      category: 'Endocrine',
-      indications: ['Thyroid dysfunction symptoms', 'Routine screening >60 years', 'Medication monitoring'],
-      contraindications: ['Recent iodine contrast exposure', 'Severe illness'],
-      frequency: 'Every 5 years for screening, 6-8 weeks after dose changes',
-      costEffectiveness: 'Moderate - high prevalence in elderly'
-    },
-    {
-      id: 'LAB004',
-      test: 'Complete Blood Count',
-      category: 'General Screening',
-      indications: ['Anemia evaluation', 'Infection screening', 'Medication monitoring'],
-      contraindications: ['None significant'],
-      frequency: 'As clinically indicated, annually for high-risk patients',
-      costEffectiveness: 'High - broad diagnostic utility'
-    }
-  ];
-
+// Lab guidelines
+const LabGuidelinesSchemaId = import.meta.env.VITE_LAB_GUIDELINE_ID;
+const { data: labGuidelinesData } = useGetInstanceQuery(LabGuidelinesSchemaId);
+const labGuidelines = labGuidelinesData || [];
+const patientSchemaId = import.meta.env.VITE_PATIENT_ID;
   useEffect(() => {
     const loadData = async () => {
       try {
         if (patientId) {
-          const patientData = await mockApi.getPatientById(patientId);
-          setPatient(patientData);
+          // Using getInstance directly in an effect is fine since it's not a React hook
+          const response = await getInstance(patientSchemaId, patientId);
+          setPatient(response.data);
         }
       } catch (error) {
         console.error('Error loading patient data:', error);
@@ -417,7 +132,7 @@ export function Appropriateness() {
       }
     };
     loadData();
-  }, [patientId]);
+  }, [patientId, patientSchemaId]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -524,7 +239,7 @@ export function Appropriateness() {
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-sm text-slate-500">Reviews Pending:</span>
                 <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">
-                  {medicationReviews.filter(r => r.status === 'pending').length}
+                  {medicationReviews.filter((r: MedicationReview) => r.status === 'pending').length}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -547,8 +262,8 @@ export function Appropriateness() {
             <BeakerIcon className="h-8 w-8 text-blue-500" />
           </div>
           <div className="mt-2 text-xs text-slate-500">
-            Pending: {medicationReviews.filter(r => r.status === 'pending').length} | 
-            Approved: {medicationReviews.filter(r => r.status === 'approved').length}
+            {medicationReviews.filter((r: MedicationReview) => r.status === 'pending').length} pending | 
+            Approved: {medicationReviews.filter((r: MedicationReview) => r.status === 'approved').length}
           </div>
         </div>
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -637,7 +352,7 @@ export function Appropriateness() {
               </div>
 
               <div className="grid grid-cols-1 gap-6">
-                {medicationReviews.map((review) => (
+                {medicationReviews.map((review: MedicationReview) => (
                   <div key={review.id} className="border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-200">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
@@ -673,7 +388,7 @@ export function Appropriateness() {
                       <div className="mb-4">
                         <h5 className="font-medium text-slate-900 mb-3">Identified Issues</h5>
                         <div className="space-y-3">
-                          {review.issues.map((issue, idx) => (
+                          {review.issues.map((issue: any, idx: number) => (
                             <div key={idx} className={`border rounded-lg p-4 ${getSeverityColor(issue.severity)}`}>
                               <div className="flex items-start gap-3">
                                 <div className="flex-shrink-0 mt-0.5">
@@ -714,7 +429,7 @@ export function Appropriateness() {
                       <div className="mb-4">
                         <h5 className="font-medium text-slate-900 mb-3">Alternative Medications</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {review.alternatives.map((alt, idx) => (
+                          {review.alternatives.map((alt: any, idx: number) => (
                             <div key={idx} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                               <h6 className="font-medium text-blue-900 mb-1">{alt.medication}</h6>
                               <p className="text-sm text-blue-800 mb-2">{alt.rationale}</p>
@@ -768,7 +483,7 @@ export function Appropriateness() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Guidelines List */}
                 <div className="space-y-4">
-                  {imagingGuidelines.map((guideline) => (
+                  {imagingGuidelines.map((guideline: ImagingGuideline) => (
                     <div 
                       key={guideline.id} 
                       className={`border rounded-2xl p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
@@ -870,7 +585,7 @@ export function Appropriateness() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {labGuidelines.map((guideline) => (
+                {labGuidelines.map((guideline: LabGuideline) => (
                   <div key={guideline.id} className="border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-200">
                     <div className="flex items-start justify-between mb-4">
                       <h4 className="text-lg font-semibold text-slate-900">{guideline.test}</h4>
@@ -883,7 +598,7 @@ export function Appropriateness() {
                       <div>
                         <h5 className="font-medium text-slate-900 mb-2">Indications</h5>
                         <ul className="space-y-1">
-                          {guideline.indications.map((indication, idx) => (
+                          {guideline.indications.map((indication: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-600 flex items-start gap-2">
                               <CheckCircleIcon className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                               {indication}
@@ -896,7 +611,7 @@ export function Appropriateness() {
                         <div>
                           <h5 className="font-medium text-slate-900 mb-2">Contraindications</h5>
                           <ul className="space-y-1">
-                            {guideline.contraindications.map((contraindication, idx) => (
+                            {guideline.contraindications.map((contraindication: string, idx: number) => (
                               <li key={idx} className="text-sm text-slate-600 flex items-start gap-2">
                                 <XCircleIcon className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
                                 {contraindication}

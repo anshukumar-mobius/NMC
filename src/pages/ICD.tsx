@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { mockApi } from '../utils/mockApi';
 import {
   CodeBracketIcon,
   MagnifyingGlassIcon,
@@ -27,6 +26,7 @@ import {
   ShieldCheckIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
+import { getInstance, getJoinInstance } from '../api/axios';
 
 interface ICDCode {
   id: string;
@@ -184,16 +184,18 @@ export function ICD() {
     const loadData = async () => {
       try {
         if (patientId) {
-          const patientData = await mockApi.getPatientById(patientId);
-          setPatient(patientData);
-        }
-        
-        // Simulate loading codes
-        setTimeout(() => {
+          const [ICDCodes, CPTCodes] = await Promise.all([
+            getInstance(import.meta.env.VITE_ICD_CODE, undefined),
+            getInstance(import.meta.env.VITE_CPT_CODE, undefined),
+          ]);
+          setIcdCodes(ICDCodes);
+          setCptCodes(CPTCodes);
+        } else {
+          // If no patientId, use mock data instead
           setIcdCodes(mockICDCodes);
           setCptCodes(mockCPTCodes);
-          setLoading(false);
-        }, 800);
+        }
+        setLoading(false);
       } catch (error) {
         console.error('Error loading ICD data:', error);
         setLoading(false);

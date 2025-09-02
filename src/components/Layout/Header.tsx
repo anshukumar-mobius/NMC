@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { ChevronDownIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
-import { mockApi } from '../../utils/mockApi';
 import { useAuth } from '../../auth/AuthContext';
 import { useGetInstanceQuery } from '../../api/query';
 
@@ -15,35 +14,33 @@ interface User {
 
 export function Header() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { user: authUser, logout, switchUser } = useAuth();
+  // Use React Query hook at the component level, not inside another function
+  const { data } = useGetInstanceQuery(import.meta.env.VITE_USERS);
+  // Ensure users is always an array, even if data or data.data is undefined
+  const users: User[] = data || [];
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const { data: Cdsusers } = useGetInstanceQuery(import.meta.env.VITE_USERS);
-        setUsers(Cdsusers);
-
-        // Use the authenticated user if available, otherwise default to first user
-        if (authUser) {
-          setCurrentUser({
-            id: authUser.id,
-            name: authUser.name,
-            email: authUser.email,
-            persona: authUser.persona,
-            department: authUser.department,
-            avatar: authUser.avatar
-          });
-        } else {
-          setCurrentUser(Cdsusers[0]); // Default to first user
-        }
-      } catch (error) {
-        console.error('Error loading users:', error);
+    // This is now safe because users is guaranteed to be an array
+    if (users && users.length > 0) {
+      console.log('Fetched users:', users);
+      
+    if (authUser) {
+        setCurrentUser({
+          id: authUser.id,
+          name: authUser.name,
+          email: authUser.email,
+          persona: authUser.persona,
+          department: authUser.department,
+          avatar: authUser.avatar
+        });
+      } else if (users.length > 0) {
+        // Only set to first user if the array is not empty
+        setCurrentUser(users[0]);
       }
-    };
-    loadData();
-  }, [authUser]);
+    }
+  }, [users, authUser]);
 
   const handleUserSwitch = async (user: User) => {
     // Update the current displayed user
@@ -104,7 +101,7 @@ export function Header() {
                     <p className="text-sm font-medium text-slate-900">Switch Persona</p>
                     <p className="text-xs text-slate-500">Select a role to continue</p>
                   </div>
-                  {users.map((user) => (
+                  {users && users.map((user: User) => (
                     <button
                       key={user.id}
                       className={`w-full flex items-center gap-x-3 px-4 py-3 text-sm text-left hover:bg-slate-50 transition-colors duration-200 ${

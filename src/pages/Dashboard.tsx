@@ -217,45 +217,45 @@ export function Dashboard() {
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 text-white">
               <div className="flex items-center justify-between mb-4">
                 <ChartBarIcon className="h-8 w-8" />
-                <span className="text-sm bg-blue-400 bg-opacity-50 px-2 py-1 rounded-full">
+                <span className="text-sm backdrop-blur-sm bg-white/20 border border-white/30 shadow-sm px-3 py-1 rounded-full">
                   Agent Activity
                 </span>
               </div>
               <div className="text-3xl font-bold mb-2">{agentActivity.alerts}</div>
               <div className="text-blue-100">Alerts processed today</div>
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-blue-400">
-                <span className="text-sm">Efficiency: {agentActivity.efficiency}%</span>
-                <span className="text-sm">{agentActivity.processed} total</span>
+              <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/30">
+                <span className="text-sm backdrop-filter backdrop-blur-sm bg-white/10 px-2 py-0.5 rounded-md">Efficiency: {agentActivity.efficiency}%</span>
+                <span className="text-sm backdrop-filter backdrop-blur-sm bg-white/10 px-2 py-0.5 rounded-md">{agentActivity.processed} total</span>
               </div>
             </div>
 
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 text-white">
               <div className="flex items-center justify-between mb-4">
                 <ClockIcon className="h-8 w-8" />
-                <span className="text-sm bg-green-400 bg-opacity-50 px-2 py-1 rounded-full">
+                <span className="text-sm backdrop-blur-sm bg-white/20 border border-white/30 shadow-sm px-3 py-1 rounded-full">
                   Pre-Auth TAT
                 </span>
               </div>
               <div className="text-3xl font-bold mb-2">{preAuthStats.avgTAT}</div>
               <div className="text-green-100">Average turnaround time</div>
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-green-400">
-                <span className="text-sm">{preAuthStats.pending} pending</span>
-                <span className="text-sm">{preAuthStats.approved}% approved</span>
+              <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/30">
+                <span className="text-sm backdrop-filter backdrop-blur-sm bg-white/10 px-2 py-0.5 rounded-md">{preAuthStats.pending} pending</span>
+                <span className="text-sm backdrop-filter backdrop-blur-sm bg-white/10 px-2 py-0.5 rounded-md">{preAuthStats.approved}% approved</span>
               </div>
             </div>
 
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 text-white">
               <div className="flex items-center justify-between mb-4">
                 <CheckCircleIcon className="h-8 w-8" />
-                <span className="text-sm bg-purple-400 bg-opacity-50 px-2 py-1 rounded-full">
+                <span className="text-sm backdrop-blur-sm bg-white/20 border border-white/30 shadow-sm px-3 py-1 rounded-full">
                   Quality Score
                 </span>
               </div>
               <div className="text-3xl font-bold mb-2">94.2%</div>
               <div className="text-purple-100">Overall clinical quality</div>
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-purple-400">
-                <span className="text-sm">JCI Ready</span>
-                <span className="text-sm">+2.1% this month</span>
+              <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/30">
+                <span className="text-sm backdrop-filter backdrop-blur-sm bg-white/10 px-2 py-0.5 rounded-md">JCI Ready</span>
+                <span className="text-sm backdrop-filter backdrop-blur-sm bg-white/10 px-2 py-0.5 rounded-md">+2.1% this month</span>
               </div>
             </div>
           </div>

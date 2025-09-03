@@ -71,4 +71,5 @@ const getJoinInstance = async (schemaId: string): Promise<any> => {
   return response.data;
 };
 
+
 export { getInstance, addInstance, getAdhoc, getJoinInstance };

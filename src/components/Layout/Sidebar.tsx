@@ -47,10 +47,12 @@ export function Sidebar() {
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 border-r border-slate-200">
+      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-white to-blue-50 px-6 pb-4 border-r border-slate-200 relative">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-bl-full opacity-30 -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-100 rounded-tr-full opacity-30 -z-10"></div>
         <div className="flex h-16 shrink-0 items-center">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-sm">A</span>
             </div>
             <div>
@@ -80,8 +82,8 @@ export function Sidebar() {
                         to={item.href}
                         className={`group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-medium transition-all duration-200 ${
                           isActive
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'text-slate-700 hover:text-blue-700 hover:bg-slate-50'
+                            ? 'bg-white/70 backdrop-blur-sm text-blue-700 border border-blue-200 shadow-sm'
+                            : 'text-slate-700 hover:text-blue-700 hover:bg-white/50 hover:backdrop-blur-sm hover:shadow-sm'
                         }`}
                       >
                         <item.icon
@@ -100,12 +102,20 @@ export function Sidebar() {
             
             {user && (
               <li className="mt-auto">
-                <div className="rounded-lg bg-blue-50 p-3">
-                  <div className="text-sm font-medium text-blue-700">
-                    Role: {user.persona}
-                  </div>
-                  <div className="text-xs text-black mt-1">
-                    Powered by Mobius
+                <div className="relative rounded-lg p-4 overflow-hidden">
+                  <div className="absolute -right-5 -bottom-5 w-20 h-20 rounded-full"></div>
+                  <div className="absolute -left-5 -top-5 w-16 h-16 rounded-full blur-md"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center mb-2">
+                      
+                      <div className="text-sm font-medium text-blue-700">
+                        Role: {user.persona}
+                      </div>
+                    </div>
+                    <div className="text-xs text-slate-600 flex items-center">
+                      <span className="h-4 w-0.5 bg-green-500 mr-1 animate-pulse"></span>
+                      Powered by Mobius
+                    </div>
                   </div>
                 </div>
               </li>

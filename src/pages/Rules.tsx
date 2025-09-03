@@ -535,14 +535,14 @@ export function Rules() {
 
                 <div className="bg-green-50 rounded-lg p-4">
                   <h4 className="font-medium text-slate-900 mb-3">Evidence Base</h4>
-                  <ul className="space-y-1">
-                    {selectedRule.evidence.map((evidence, idx) => (
-                      <li key={idx} className="text-sm text-slate-600 flex items-start gap-2">
-                        <CheckCircleIcon className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        {evidence}
-                      </li>
-                    ))}
-                  </ul>
+                    <ul className="space-y-1">
+                      {(selectedRule.evidence ?? []).map((evidence, idx) => (
+                        <li key={idx} className="text-sm text-slate-600 flex items-start gap-2">
+                          <CheckCircleIcon className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          {evidence}
+                        </li>
+                      ))}
+                    </ul>
                 </div>
               </div>
 
@@ -570,32 +570,32 @@ export function Rules() {
 
                 <div className="bg-amber-50 rounded-lg p-4">
                   <h4 className="font-medium text-slate-900 mb-3">References</h4>
-                  <ul className="space-y-1">
-                    {selectedRule.references.map((reference, idx) => (
-                      <li key={idx} className="text-sm text-slate-600 flex items-start gap-2">
-                        <DocumentTextIcon className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        {reference}
-                      </li>
-                    ))}
-                  </ul>
+                    <ul className="space-y-1">
+                      {(selectedRule.references ?? []).map((reference, idx) => (
+                        <li key={idx} className="text-sm text-slate-600 flex items-start gap-2">
+                          <DocumentTextIcon className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                          {reference}
+                        </li>
+                      ))}
+                    </ul>
                 </div>
 
                 <div className="bg-slate-50 rounded-lg p-4">
                   <h4 className="font-medium text-slate-900 mb-3">Audit Trail</h4>
-                  <div className="space-y-2">
-                    {selectedRule.auditTrail.map((entry, idx) => (
-                      <div key={idx} className="text-sm">
-                        <div className="flex justify-between items-start">
-                          <span className="font-medium text-slate-900">{entry.action}</span>
-                          <span className="text-slate-500">{new Date(entry.date).toLocaleDateString()}</span>
+                    <div className="space-y-2">
+                      {(selectedRule.auditTrail ?? []).map((entry, idx) => (
+                        <div key={idx} className="text-sm">
+                          <div className="flex justify-between items-start">
+                            <span className="font-medium text-slate-900">{entry.action}</span>
+                            <span className="text-slate-500">{new Date(entry.date).toLocaleDateString()}</span>
+                          </div>
+                          <div className="text-slate-600">by {entry.user}</div>
+                          {entry.changes && (
+                            <div className="text-slate-500 text-xs mt-1">{entry.changes}</div>
+                          )}
                         </div>
-                        <div className="text-slate-600">by {entry.user}</div>
-                        {entry.changes && (
-                          <div className="text-slate-500 text-xs mt-1">{entry.changes}</div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
                 </div>
               </div>
             </div>

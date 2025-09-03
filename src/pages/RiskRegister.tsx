@@ -387,10 +387,10 @@ export function RiskRegister() {
                 <EyeIcon className="h-4 w-4" />
                 View Details
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm">
+              {/* <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm">
                 <PencilIcon className="h-4 w-4" />
                 Update
-              </button>
+              </button> */}
               <button className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors duration-200 text-sm">
                 <BellIcon className="h-4 w-4" />
                 Set Alert

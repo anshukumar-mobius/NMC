@@ -156,11 +156,11 @@ export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
           <div className="text-xs text-slate-500">Critical</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-orange-600">{displayAlerts.filter(a => a.severity === 'high').length}</div>
+          <div className="text-2xl font-bold text-amber-600">{displayAlerts.filter(a => a.severity === 'high').length}</div>
           <div className="text-xs text-slate-500">High</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-amber-600">{displayAlerts.filter(a => a.severity === 'medium').length}</div>
+          <div className="text-2xl font-bold text-amber-500">{displayAlerts.filter(a => a.severity === 'medium').length}</div>
           <div className="text-xs text-slate-500">Medium</div>
         </div>
       </div>

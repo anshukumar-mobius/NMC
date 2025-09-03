@@ -106,7 +106,7 @@ export function Login() {
         <div className="max-w-md mx-auto w-full">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-slate-900">Welcome Back</h2>
-            <p className="mt-2 text-slate-600">NMC Healthcare Clinical Decision Support</p>
+            <p className="mt-2 text-slate-600">Healthcare Clinical Decision Support</p>
           </div>
           {error && (
             <div className="rounded-md bg-red-50 p-4 mb-6 border border-red-100">

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ShieldCheckIcon,
@@ -8,7 +7,6 @@ import {
   ArrowRightIcon,
   BellIcon
 } from '@heroicons/react/24/outline';
-
 interface CDSAlert {
   id: string;
   severity: 'critical' | 'high' | 'medium' | 'low';
@@ -28,7 +26,7 @@ export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
       severity: 'critical',
       title: 'Critical INR Elevation',
       patient: 'Omar Al-Mansouri',
-      timestamp: '2024-01-20T11:45:00Z'
+      timestamp: '1705745700000'
     },
     {
       id: 'CDS002',
@@ -66,6 +64,36 @@ export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
       timestamp: '2024-01-20T08:45:00Z'
     }
   ];
+
+  const formatTimestamp = (timestamp: string | number) => {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+      // Try parsing as a number if it's a string representation of a number
+      const numTimestamp = Number(timestamp);
+      if (!isNaN(numTimestamp)) {
+        const numDate = new Date(numTimestamp);
+        if (!isNaN(numDate.getTime())) {
+          return numDate.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+          });
+        }
+      }
+      return 'Invalid Date';
+    }
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
 
   const displayAlerts = alerts.length > 0 ? alerts : mockAlerts;
   const activeAlerts = displayAlerts.filter(alert => alert.severity === 'critical' || alert.severity === 'high');
@@ -141,21 +169,27 @@ export function CDSWidget({ alerts = [] }: CDSWidgetProps) {
       <div className="space-y-3">
         <h4 className="text-sm font-medium text-slate-700">Recent Alerts</h4>
         {activeAlerts.slice(0, 3).map((alert) => (
-          <div key={alert.id} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-            <div className="flex-shrink-0 mt-0.5">
-              {getSeverityIcon(alert.severity)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${getSeverityColor(alert.severity)}`}>
-                  {alert.severity.toUpperCase()}
-                </span>
+          <Link
+            key={alert.id}
+            to={`/cds?alertId=${alert.id}`}
+            className="block hover:bg-slate-100 transition-colors duration-200 rounded-lg"
+          >
+            <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+              <div className="flex-shrink-0 mt-0.5">
+                {getSeverityIcon(alert.severity)}
               </div>
-              <p className="text-sm font-medium text-slate-900 truncate">{alert.title}</p>
-              <p className="text-xs text-slate-500">Patient: {alert.patient}</p>
-              <p className="text-xs text-slate-400">{new Date(alert.timestamp).toLocaleString()}</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${getSeverityColor(alert.severity)}`}>
+                    {alert.severity.toUpperCase()}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-slate-900 truncate">{alert.title}</p>
+                <p className="text-xs text-slate-500">Patient: {alert.patient}</p>
+                <p className="text-xs text-slate-400">{formatTimestamp(alert.timestamp)}</p>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

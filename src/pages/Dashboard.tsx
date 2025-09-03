@@ -14,6 +14,7 @@ import {
   PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import { getInstance, getJoinInstance } from '../api/axios';
+import { useGetInstanceQuery } from '../api/query';
 
 // Define interfaces for OKR data structure
 interface KeyResult {
@@ -63,6 +64,8 @@ export function Dashboard() {
     persona: 'all',
     kpiCategory: 'all'
   });
+      const AlertSchema = import.meta.env.VITE_ALERT_ID;
+  const { data: Alerts } = useGetInstanceQuery(AlertSchema);
 
   useEffect(() => {
     const loadData = async () => {
@@ -280,7 +283,7 @@ export function Dashboard() {
 
       {/* CDS Widget */}
       <div className="mb-8">
-        <CDSWidget />
+        <CDSWidget alerts={Alerts} />
       </div>
 
       {/* OKR Cards */}

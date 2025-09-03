@@ -8,36 +8,21 @@ import {
   XCircleIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
-  UserIcon,
-  CalendarDaysIcon,
-  BanknotesIcon,
   ShieldCheckIcon,
   DocumentTextIcon,
   MagnifyingGlassIcon,
-  FunnelIcon,
   ArrowPathIcon,
   EyeIcon,
   PencilIcon,
-  ChatBubbleLeftRightIcon,
   CpuChipIcon,
   ChartBarIcon,
   BuildingOfficeIcon,
-  IdentificationIcon,
   PhoneIcon,
   EnvelopeIcon,
   GlobeAltIcon,
-  BeakerIcon,
-  HeartIcon,
-  CameraIcon,
-  ScissorsIcon,
   PlusIcon,
-  MinusIcon,
   LightBulbIcon,
-  ExclamationCircleIcon,
   BellIcon,
-  ArrowRightIcon,
-  ArrowDownIcon,
-  ArrowUpIcon
 } from '@heroicons/react/24/outline';
 import { useGetInstanceQuery } from '../api/query';
 
@@ -192,7 +177,6 @@ export function Claims() {
   const {data: insuranceProvidersData} = useGetInstanceQuery(InsuranceProviderSchema);
 
   useEffect(() => {
-    const loadData = async () => {
       try {
           setClaims(Claim || []);
           setPreAuths(preAuth || []);
@@ -202,8 +186,6 @@ export function Claims() {
         console.error('Error loading claims data:', error);
         setLoading(false);
       }
-    };
-    loadData();
   }, []);
 
   const getStatusColor = (status: string) => {

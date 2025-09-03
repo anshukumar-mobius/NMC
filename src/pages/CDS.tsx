@@ -81,8 +81,8 @@ export function CDS() {
   // Mock alerts data
 
   const AlertSchema = import.meta.env.VITE_ALERT_ID;
-  const PatientSchema = import.meta.env.VITE_PATIENT_ID;
   const { data: Alerts } = useGetInstanceQuery(AlertSchema);
+  const PatientSchema = import.meta.env.VITE_PATIENT_ID;
 
   useEffect(() => {
     const loadData = async () => {
@@ -103,6 +103,37 @@ export function CDS() {
     };
     loadData();
   }, [patientId, Alerts]);
+
+  // Handle highlighted alert from URL
+  useEffect(() => {
+    const alertId = searchParams.get('alertId');
+    if (alertId && alerts.length > 0) {
+      // Find the alert and set it as selected
+      const targetAlert = alerts.find(alert => alert.id === alertId);
+      if (targetAlert) {
+        setSelectedAlert(targetAlert);
+        
+        // Ensure we're on the correct tab
+        if (targetAlert.status !== 'active') {
+          setActiveTab(targetAlert.status);
+        }
+        
+        // Add a small delay to ensure the DOM is ready
+        setTimeout(() => {
+          const element = document.getElementById(`alert-${alertId}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.classList.add('bg-blue-50', 'ring-2', 'ring-blue-400');
+            
+            // Remove highlight after 3 seconds
+            setTimeout(() => {
+              element.classList.remove('bg-blue-50', 'ring-2', 'ring-blue-400');
+            }, 3000);
+          }
+        }, 500);
+      }
+    }
+  }, [searchParams, alerts]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -211,6 +242,45 @@ export function CDS() {
         return true;
     }
   });
+
+  const formatTimestamp = (timestamp: string) => {
+    if (!timestamp) {
+      return 'N/A';
+    }
+    
+    const numTimestamp = Number(timestamp);
+    if (isNaN(numTimestamp)) {
+      // It might be an ISO string or other date format, try to parse it directly
+      const date = new Date(timestamp);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        });
+      }
+      return 'N/A';
+    }
+
+    // If it's a 10-digit number, assume it's in seconds, otherwise milliseconds
+    const date = new Date(timestamp.length === 10 ? numTimestamp * 1000 : numTimestamp);
+    
+    if (isNaN(date.getTime())) {
+      return 'N/A';
+    }
+
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
 
   if (loading) {
     return (
@@ -366,7 +436,11 @@ export function CDS() {
             </div>
           ) : (
             filteredAlerts.map((alert) => (
-              <div key={alert.id} className="p-6 hover:bg-slate-50 transition-colors duration-200">
+              <div 
+                key={alert.id} 
+                id={`alert-${alert.id}`} 
+                className="p-6 hover:bg-slate-50 transition-colors duration-200"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
@@ -465,7 +539,7 @@ export function CDS() {
                       <div className="flex items-center gap-4">
                         <span className="flex items-center gap-1">
                           <CalendarDaysIcon className="h-4 w-4" />
-                          {new Date(alert.timestamp).toLocaleString()}
+                          {formatTimestamp(alert.timestamp)}
                         </span>
                         <span className="flex items-center gap-1">
                           <CpuChipIcon className="h-4 w-4" />

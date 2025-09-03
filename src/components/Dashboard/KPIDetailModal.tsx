@@ -1,4 +1,4 @@
-import { XMarkIcon, InformationCircleIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, InformationCircleIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, MinusIcon } from '@heroicons/react/24/outline';
 import { ChartBarIcon, DocumentChartBarIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
@@ -26,6 +26,38 @@ interface KPIDetailModalProps {
 
 export function KPIDetailModal({ kpi, isOpen, onClose }: KPIDetailModalProps) {
   if (!isOpen || !kpi) return null;
+
+  const formatLastUpdated = (timestamp: string) => {
+    if (!timestamp) {
+      return 'N/A';
+    }
+    
+    const numTimestamp = Number(timestamp);
+    if (isNaN(numTimestamp)) {
+      // It might be an ISO string or other date format, try to parse it directly
+      const date = new Date(timestamp);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleString();
+      }
+      return 'N/A';
+    }
+
+    // If it's a 10-digit number, assume it's in seconds, otherwise milliseconds
+    const date = new Date(timestamp.length === 10 ? numTimestamp * 1000 : numTimestamp);
+    
+    if (isNaN(date.getTime())) {
+      return 'N/A';
+    }
+
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
 
   const getCategoryColor = () => {
     switch (kpi.category) {
@@ -223,16 +255,16 @@ export function KPIDetailModal({ kpi, isOpen, onClose }: KPIDetailModalProps) {
 
           {/* KPI Details */}
           <div className="grid grid-cols-1 gap-6 mb-8">
-            {/* Trend Visualization - Now full width and larger */}
             <div className="bg-slate-50 rounded-xl p-6">
               <div className="flex items-center gap-2 mb-4">
                 <ChartBarIcon className="h-5 w-5 text-slate-400" />
                 <h3 className="text-lg font-medium text-slate-900">Trend (12 Months)</h3>
-                <span className={`ml-auto text-sm px-2 py-0.5 rounded-full ${
+                <span className={`ml-auto inline-flex items-center text-sm px-2 py-0.5 rounded-full ${
                   kpi.trend === 'up' ? 'bg-green-100 text-green-800' : 
                   (kpi.trend === 'down' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800')
                 }`}>
-                  {kpi.trend === 'up' ? 'Increasing' : (kpi.trend === 'down' ? 'Decreasing' : 'Stable')} ({kpi.change})
+                  {kpi.trend === 'up' ? <ArrowTrendingUpIcon className="h-4 w-4 mr-1" /> : (kpi.trend === 'down' ? <ArrowTrendingDownIcon className="h-4 w-4 mr-1" /> : <MinusIcon className="h-4 w-4 mr-1" />)}
+                  {kpi.trend === 'up' ? 'Increasing' : (kpi.trend === 'down' ? 'Decreasing' : 'Stable')} {kpi.change && `(${kpi.change})`}
                 </span>
               </div>
               <div className="h-96 w-full">
@@ -333,7 +365,7 @@ export function KPIDetailModal({ kpi, isOpen, onClose }: KPIDetailModalProps) {
                 <div className="flex items-center">
                   <ClockIcon className="h-4 w-4 text-slate-400 mr-1" />
                   <span className="text-slate-500">Last Updated:</span>
-                  <span className="ml-2 text-slate-900">{kpi.lastUpdated}</span>
+                  <span className="ml-2 text-slate-900">{formatLastUpdated(kpi.lastUpdated)}</span>
                 </div>
               </div>
             </div>

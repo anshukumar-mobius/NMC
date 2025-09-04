@@ -86,19 +86,37 @@ export function Rules() {
   const { data: Rules } = useGetInstanceQuery(RulesSchemaId);
   console.log(Rules);
 
+  // Helper function to fix dates from 2024 to 2025
+  const fixYearInDate = (dateString: string) => {
+    if (!dateString) return dateString;
+    const date = new Date(dateString);
+    if (date.getFullYear() === 2024) {
+      date.setFullYear(2025);
+      return date.toISOString();
+    }
+    return dateString;
+  };
+
   useEffect(() => {
-    const loadRules = async () => {
       try {
-          setRules(Rules || []);
-          setFilteredRules(Rules || []);
+          const rulesData = Rules || [];
+          // Fix any dates from 2024 to 2025
+          const fixedRulesData = rulesData.map((rule: ClinicalRule) => ({
+            ...rule,
+            lastModified: fixYearInDate(rule.lastModified),
+            auditTrail: rule.auditTrail?.map(entry => ({
+              ...entry,
+              date: fixYearInDate(entry.date)
+            }))
+          }));
+          setRules(fixedRulesData);
+          setFilteredRules(fixedRulesData);
           setLoading(false);
       } catch (error) {
         console.error('Error loading rules:', error);
         setLoading(false);
       }
-    };
-    loadRules();
-  }, []);
+  }, [Rules]);
 
   useEffect(() => {
     let filtered = rules;
@@ -445,10 +463,10 @@ export function Rules() {
                 <PencilIcon className="h-4 w-4" />
                 Edit
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 text-sm">
+              {/* <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 text-sm">
                 <ArrowPathIcon className="h-4 w-4" />
                 Test Rule
-              </button>
+              </button> */}
             </div>
           </div>
         ))}
@@ -604,9 +622,9 @@ export function Rules() {
               <button className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
                 Edit Rule
               </button>
-              <button className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200">
+              {/* <button className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200">
                 Test Rule
-              </button>
+              </button> */}
               <button className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-200">
                 Export Rule
               </button>

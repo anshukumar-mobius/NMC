@@ -26,7 +26,9 @@ import {
   ShieldCheckIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
-import { getInstance, getJoinInstance } from '../api/axios';
+import { getInstance, getJoinInstance, interactAgent } from '../api/axios';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import { patients } from '../mock/patients.json';
 
 interface ICDCode {
   id: string;
@@ -69,8 +71,9 @@ interface Patient {
 
 export function ICD() {
   const [searchParams] = useSearchParams();
-  const patientId = searchParams.get('patient');
-  
+  // Get patient from URL params or use default
+  const [patientId, setPatientId] = useState(searchParams.get('patient') || "P0001");
+
   const [patient, setPatient] = useState<Patient | null>(null);
   const [icdCodes, setIcdCodes] = useState<ICDCode[]>([]);
   const [cptCodes, setCptCodes] = useState<CPTCode[]>([]);
@@ -80,6 +83,31 @@ export function ICD() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [clinicalText, setClinicalText] = useState('');
   const [aiSuggestions, setAiSuggestions] = useState<any[]>([]);
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
+
+  // Set up patient data from mock data
+  useEffect(() => {
+    const found = patients.find(p => p.id === patientId);
+    if (found) {
+      // Create a patient object that matches our Patient interface
+      setPatient({
+        id: found.id,
+        name: found.name,
+        mrn: found.mrn,
+        age: found.age,
+        gender: found.gender,
+        // Add empty arrays for the required fields in our Patient interface
+        diagnosis: [],
+        procedures: [],
+        medications: []
+      });
+    }
+  }, [patientId]);
 
   // Mock data
   const mockICDCodes: ICDCode[] = [
@@ -182,7 +210,9 @@ export function ICD() {
 
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
       try {
+        console.log('Loading data for patientId:', patientId);
         if (patientId) {
           const [ICDCodes, CPTCodes] = await Promise.all([
             getInstance(import.meta.env.VITE_ICD_CODE, undefined),
@@ -195,40 +225,79 @@ export function ICD() {
           setIcdCodes(mockICDCodes);
           setCptCodes(mockCPTCodes);
         }
-        setLoading(false);
       } catch (error) {
         console.error('Error loading ICD data:', error);
+        // Fallback to mock data on error
+        setIcdCodes(mockICDCodes);
+        setCptCodes(mockCPTCodes);
+      } finally {
         setLoading(false);
       }
     };
     loadData();
   }, [patientId]);
 
-  const handleAIAnalysis = () => {
+  useEffect(() => {
+    if (transcript && transcript !== clinicalText) {
+      setClinicalText(transcript);
+    }
+  }, [transcript]);
+
+  const handleAIAnalysis = async () => {
     if (!clinicalText.trim()) return;
     
-    // Simulate AI analysis
+    // Use the agent interaction API
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const agentId = import.meta.env.VITE_TEXT_TO_ICD; // Your ICD agent ID
+      const response = await interactAgent({
+        agentId,
+        query: clinicalText,
+        userId: "123",
+        sessionId: "",
+        streaming: false,
+        fileUrl: []
+      });
+      
+      // Parse the response data - it's a JSON string inside the text field
+      let parsedData;
+      try {
+        parsedData = JSON.parse(response.text);
+      } catch (err) {
+        console.error('Error parsing API response:', err);
+        throw new Error('Invalid response format');
+      }
+      
+      // Create a suggestion from the parsed data
+      const suggestions = [{
+        type: 'ICD',
+        code: parsedData.code || 'N/A',
+        description: parsedData.description || 'No description available',
+        confidence: parsedData.confidence || 0.8,
+        reasoning: parsedData.aiRecommendation || 'Based on clinical text analysis',
+        // Additional data that can be used for the detailed view
+        fullData: parsedData
+      }];
+      
+      console.log('Parsed API response:', parsedData);
+      setAiSuggestions(suggestions);
+    } catch (error) {
+      console.error('Error analyzing clinical text:', error);
+      // Fallback to mock data if API fails
+      // Fallback to mock data if API fails
       const suggestions = [
         {
           type: 'ICD',
           code: 'E11.9',
           description: 'Type 2 diabetes mellitus without complications',
           confidence: 0.94,
-          reasoning: 'Clinical text mentions diabetes management and HbA1c values'
-        },
-        {
-          type: 'CPT',
-          code: '99213',
-          description: 'Office visit, established patient',
-          confidence: 0.89,
-          reasoning: 'Routine follow-up visit pattern identified'
+          reasoning: 'Clinical text mentions diabetes management and HbA1c values (fallback)'
         }
       ];
       setAiSuggestions(suggestions);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const getConfidenceColor = (confidence: number) => {
@@ -251,12 +320,31 @@ export function ICD() {
       </div>
     );
   }
-
+  console.log(aiSuggestions);
   return (
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 mb-2">ICD & CPT Coding</h1>
-        <p className="text-slate-600">AI-powered medical coding and mapping system</p>
+        <div className="flex justify-between items-center">
+          <p className="text-slate-600">AI-powered medical coding and mapping system</p>
+          
+          {/* Patient Selector */}
+          <div className="flex items-center gap-2">
+            <label htmlFor="patient-select" className="text-sm font-medium text-slate-700">
+              Select Patient:
+            </label>
+            <select 
+              id="patient-select"
+              value={patientId}
+              onChange={(e) => setPatientId(e.target.value)}
+              className="border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            >
+              <option value="P0001">Omar Al-Mansouri</option>
+              <option value="P0002">Sarah Johnson</option>
+              <option value="P0003">Ahmed Hassan</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* Patient Context */}
@@ -294,18 +382,49 @@ export function ICD() {
           <CpuChipIcon className="h-6 w-6 text-purple-600" />
           <h3 className="text-lg font-semibold text-slate-900">AI-Powered Code Analysis</h3>
         </div>
-        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Clinical Documentation
             </label>
-            <textarea
-              value={clinicalText}
-              onChange={(e) => setClinicalText(e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter clinical notes, diagnosis, procedures, or treatment details..."
-            />
+            <div className="relative">
+              <textarea
+                value={clinicalText}
+                onChange={(e) => setClinicalText(e.target.value)}
+                className="w-full h-32 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Enter clinical notes, diagnosis, procedures, or treatment details..."
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (listening) {
+                    SpeechRecognition.stopListening();
+                  } else {
+                    resetTranscript();
+                    SpeechRecognition.startListening({ continuous: true });
+                  }
+                }}
+                className={`absolute top-2 right-2 flex items-center justify-center w-9 h-9 rounded-full bg-purple-100 hover:bg-purple-200 border border-purple-300 shadow transition-colors ${listening ? 'ring-2 ring-purple-500' : ''}`}
+                title={listening ? 'Stop Listening' : 'Start Speech to Text'}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className={`w-6 h-6 text-purple-600 ${listening ? 'animate-pulse' : ''}`}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75v2.25m0 0h3m-3 0H9m3-2.25a4.5 4.5 0 004.5-4.5V9a4.5 4.5 0 10-9 0v3.75a4.5 4.5 0 004.5 4.5z" />
+                </svg>
+              </button>
+            </div>
+            {!browserSupportsSpeechRecognition && (
+              <div className="text-xs text-red-500 mt-2">Browser does not support speech recognition.</div>
+            )}
+            {listening && (
+              <div className="text-xs text-purple-600 mt-2">Listening... Speak now.</div>
+            )}
             <button
               onClick={handleAIAnalysis}
               disabled={!clinicalText.trim() || loading}

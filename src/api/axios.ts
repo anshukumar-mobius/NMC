@@ -71,5 +71,45 @@ const getJoinInstance = async (schemaId: string): Promise<any> => {
   return response.data;
 };
 
+const getInteraction = async (query:string): Promise<any> => {
+  const bodyData ={
+    "type": "TIDB",
+  }
+}
 
-export { getInstance, addInstance, getAdhoc, getJoinInstance };
+const interactAgent = async ({
+  agentId,
+  query,
+  userId = "123",
+  sessionId = "",
+  streaming = false,
+  fileUrl = []
+}: {
+  agentId: string;
+  query: string;
+  userId?: string;
+  sessionId?: string;
+  streaming?: boolean;
+  fileUrl?: any[];
+}) => {
+  const url = "https://ig.gov-cloud.ai/agent-orchestration-framework-fastapi/agent/interact";
+  const token = Vite_Token || localStorage.getItem("token");
+  const bodyData = {
+    agentId,
+    query,
+    userId,
+    sessionId,
+    streaming,
+    fileUrl
+  };
+  const response: AxiosResponse = await axios.post(url, bodyData, {
+    headers: {
+      "Content-Type": "application/json",
+      "token": token,
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export { getInstance, addInstance, getAdhoc, getJoinInstance, interactAgent };

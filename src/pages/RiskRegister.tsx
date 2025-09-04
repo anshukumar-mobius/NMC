@@ -54,12 +54,30 @@ export function RiskRegister() {
   const { data: RiskRegister } = useGetInstanceQuery(RiskSchema);
   console.log("Risk Register Data:", RiskRegister);
 
+  // Helper function to fix dates from 2024 to 2025
+  const fixYearInDate = (dateString: string) => {
+    if (!dateString) return dateString;
+    const date = new Date(dateString);
+    if (date.getFullYear() === 2024) {
+      date.setFullYear(2025);
+      return date.toISOString();
+    }
+    return dateString;
+  };
+
   useEffect(() => {
     const loadRisks = async () => {
       try {
           const riskData = RiskRegister || [];
-          setRisks(riskData);
-          setFilteredRisks(riskData);
+          // Fix any dates from 2024 to 2025
+          const fixedRiskData = riskData.map((risk: RiskItem) => ({
+            ...risk,
+            lastReview: fixYearInDate(risk.lastReview),
+            nextReview: fixYearInDate(risk.nextReview),
+            dueDate: fixYearInDate(risk.dueDate)
+          }));
+          setRisks(fixedRiskData);
+          setFilteredRisks(fixedRiskData);
           setLoading(false);
       } catch (error) {
         console.error('Error loading risks:', error);
